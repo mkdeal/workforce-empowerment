@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: 8.5in 11in; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --navy: #1b3a5c;
+    --navy-soft: #2e5a86;
+    --accent: #c4632a;
+    --ink: #3d4349;
+    --ink-soft: #5a6770;
+    --band: #d8e7f0;
+    --box: #eceef1;
+    --rule: #c9d3da;
+  }
+  html, body { width: 8.5in; height: 11in; }
+  body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    color: #3d4349;
+    font-size: 9.3px;
+    line-height: 1.42;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { width: 8.5in; height: 11in; display: flex; flex-direction: column; }
+
+  /* Header */
+  .header { background: #d8e7f0; padding: 26px 40px 22px; }
+  .header h1 { color: #1b3a5c; font-size: 30px; font-weight: 800; letter-spacing: -0.4px; }
+  .header .sub { margin-top: 6px; font-size: 12px; font-weight: 700; }
+  .header .sub .accent { color: #c4632a; }
+  .header .sub .loc { color: #1b3a5c; }
+
+  .body { padding: 18px 40px 0; flex: 1; }
+
+  /* Problem box */
+  .problem {
+    background: #eceef1; border-radius: 6px; padding: 14px 18px; margin-bottom: 16px;
+  }
+  .problem p { margin-bottom: 8px; }
+  .problem p:last-child { margin-bottom: 0; }
+  .problem .lead { color: #c4632a; font-weight: 600; }
+
+  /* Section headers */
+  .sec-h {
+    color: #1b3a5c; font-size: 10px; font-weight: 700; letter-spacing: 1.3px;
+    text-transform: uppercase; padding-bottom: 4px; border-bottom: 1px solid #c9d3da;
+    margin-bottom: 8px;
+  }
+
+  .belief-row { display: flex; gap: 26px; margin-bottom: 15px; }
+  .belief-col { flex: 1; }
+  .belief-col p { margin-top: 6px; }
+  .belief-col p:first-of-type { margin-top: 0; }
+  .pull { color: #1b3a5c; font-weight: 600; }
+
+  /* Layers strip */
+  .layers { background: #eceef1; border-radius: 6px; padding: 12px 18px 13px; margin-bottom: 16px; }
+  .layers .cap-top { font-size: 9px; letter-spacing: 0.4px; color: #5a6770; margin-bottom: 9px; }
+  .flow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+  .node {
+    flex: 1; text-align: center; color: #1b3a5c; font-weight: 700; font-size: 11px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .arrow { color: #c4632a; font-weight: 700; font-size: 14px; padding: 0 4px; }
+  .layers .cap-bot { font-size: 9px; color: #5a6770; line-height: 1.4; font-style: italic; }
+
+  /* Two columns */
+  .cols { display: flex; gap: 30px; }
+  .col-left { flex: 1.32; }
+  .col-right { flex: 1; }
+
+  .fmt-intro { color: #c4632a; font-weight: 600; margin-bottom: 9px; }
+  .fmt { margin-bottom: 8px; }
+  .fmt .name { color: #1b3a5c; font-weight: 700; }
+  .fmt .desc { color: #3d4349; }
+
+  .case-box { background: #eceef1; border-radius: 6px; padding: 12px 15px; }
+  .case { margin-bottom: 10px; }
+  .case:last-of-type { margin-bottom: 0; }
+  .case .ctitle { color: #1b3a5c; font-weight: 700; margin-bottom: 2px; }
+  .quote { margin-top: 11px; padding-top: 10px; border-top: 1px solid #c9d3da; font-style: italic; color: #5a6770; }
+  .quote .who { display: block; font-style: normal; margin-top: 3px; font-size: 8.6px; color: #6b7780; }
+
+  /* Footer */
+  .footer { display: flex; gap: 30px; padding: 16px 40px 22px; margin-top: 16px; }
+  .connect { flex: 1; background: #eceef1; border-radius: 6px; padding: 14px 16px; }
+  .connect h3 { color: #1b3a5c; font-size: 15px; font-weight: 800; margin-bottom: 6px; }
+  .connect .who { margin-top: 9px; color: #1b3a5c; font-weight: 700; }
+  .about { flex: 1.45; }
+  .about h3 { color: #1b3a5c; font-size: 10px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; padding-bottom: 4px; border-bottom: 1px solid #c9d3da; margin-bottom: 8px; }
+  .about p { margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <h1>Workforce Empowerment</h1>
+    <div class="sub"><span class="accent">Beyond Strategy, Where Performance Ignites or Stalls</span></div>
+  </div>
+
+  <div class="body">
+
+    <div class="problem">
+      <p><span class="lead">Most organizations invest heavily in strategy, process, and tools, and leave the human layer to chance.</span> The result is predictable: burnout, communication that breaks down, and good people who stop bringing their best because they can't sustain it under pressure.</p>
+      <p>This isn't a motivation problem, it's a human-system problem. No strategy fills the gap when the people inside a team don't have what they need to regulate under stress, stay aligned on how to show up, and communicate across their differences. We believe the human layer is where performance is improved or held back, and it's the layer most organizations never deliberately work on.</p>
+    </div>
+
+    <div class="belief-row">
+      <div class="belief-col">
+        <div class="sec-h">Our View — Start With the Individual</div>
+        <p>We start with the individual, because everything else builds from there. Each person is closer to the truth of what they need than anyone outside them, and each holds the power of choice in how they think, act, and show up.</p>
+        <p>We spend a third of our lives at work, which makes it one of the most overlooked places for real growth. Within any team, a single person can raise or lower the quality of the whole, so the individual is where lasting change begins.</p>
+      </div>
+      <div class="belief-col">
+        <div class="sec-h">How We Work — Lead Out From Within</div>
+        <p>Our methodology works from the inside out. The idea that anchors it is simple: <span class="pull">to lead out from within.</span> Real change in a person or an organization isn't installed from the outside through a new policy or a slide deck, it's drawn out from what's already there.</p>
+        <p>We start with the human layer, the body and nervous system where performance either holds or collapses, then build up through emotional regulation, leadership, and team effectiveness. The sequence stays the same; the content and framing shift to fit your people.</p>
+      </div>
+    </div>
+
+    <div class="layers">
+      <div class="cap-top">The same inside-out methodology scales at every level:</div>
+      <div class="flow">
+        <div class="node">Individual</div>
+        <div class="arrow">&rarr;</div>
+        <div class="node">Team</div>
+        <div class="arrow">&rarr;</div>
+        <div class="node">Program</div>
+        <div class="arrow">&rarr;</div>
+        <div class="node">Organization</div>
+      </div>
+      <div class="cap-bot">We treat an organization the way we treat a person: as something capable of self-awareness, growth, and reaching its fuller potential. Improve performance at the human level and it compounds outward, from the individual through the team and program all the way to the organization.</div>
+    </div>
+
+    <div class="cols">
+      <div class="col-left">
+        <div class="sec-h">How We've Delivered This</div>
+        <p class="fmt-intro">These formats run individually or combine into a multi-session arc, tailored to your team's needs and timeline.</p>
+        <div class="fmt"><span class="name">Diagnostic Survey.</span> <span class="desc">An anonymous read on what's actually happening, friction points, morale, and strengths to protect, before we walk in the room. It gives your people a voice and gives us a map instead of assumptions.</span></div>
+        <div class="fmt"><span class="name">Manager Workshop.</span> <span class="desc">We work with managers, the layer where leadership intent either turns into action or stalls. The goal is to shift them from feeling squeezed to leading with clarity and confidence.</span></div>
+        <div class="fmt"><span class="name">Junior Employee Workshop.</span> <span class="desc">Frontline and junior staff come together across teams to build shared language and the personal foundations of how the body responds to stress and how to show up for each other.</span></div>
+        <div class="fmt"><span class="name">All-Hands Workshop.</span> <span class="desc">The full team works on individual and team resilience, built off the survey findings, and leaves with shared language, written commitments, and tools they can actually use.</span></div>
+        <div class="fmt"><span class="name">Leadership Off-Site.</span> <span class="desc">A one or two day immersive for your leadership team: somatic foundations, leadership frameworks, and team alignment that closes with something they create together, shared agreements, operating norms, or a co-created purpose.</span></div>
+      </div>
+
+      <div class="col-right">
+        <div class="sec-h">In Practice</div>
+        <div class="case-box">
+          <div class="case">
+            <div class="ctitle">U.S. Forest Service — Bend-Fort Rock Ranger District</div>
+            <div>A nine-month engagement across 160+ personnel and multiple delivery formats, inside one of the more demanding operating environments available: a workforce navigating historic budget cuts and a high-stakes fire season. Shared language seeded district-wide ahead of tier-specific work.</div>
+          </div>
+          <div class="case">
+            <div class="ctitle">U.S. Forest Service — Recreation Program, Deschutes National Forest</div>
+            <div>A 29-person team. Survey-first diagnostic followed by a three-workshop arc over six weeks, focused on resilience heading into the summer field season.</div>
+          </div>
+          <div class="quote">
+            "I personally found a ton of benefit from it, both personally and professionally."
+            <span class="who">USFS Recreation Program employee</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <div class="connect">
+      <h3>Let's Connect</h3>
+      <div>We'd welcome a 30-minute conversation to understand what your team is navigating and where this work could help.</div>
+      <div class="who">Mike Deal</div>
+      <div>mkdeal@gmail.com &nbsp;|&nbsp; 703.362.5977</div>
+    </div>
+    <div class="about">
+      <h3>About</h3>
+      <p>I'm a former U.S. Marine Officer, Deloitte management consultant, and USDA Forest Service Deputy District Ranger. Across 15+ years leading teams through high-stakes environments, the work that's mattered most has always been the human side, and what it actually takes to sustain performance when conditions get hard.</p>
+      <p>I'm also a certified Holotropic Breathwork&reg; facilitator and Emotional Freedom Technique practitioner, with a decade of direct experience in somatic health and behavioral psychology. I build this work with my partner Lauren Kieler, who joined to help develop and scale the practice. Based in Bend, Oregon.</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
