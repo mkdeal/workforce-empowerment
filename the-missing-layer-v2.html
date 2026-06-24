@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Missing Layer: Building Stronger from the Inside Out</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --slate: #1e2d3d;
+    --terra: #c1614a;
+    --white: #ffffff;
+    --black: #1a1a1a;
+    --slate-10: rgba(30,45,61,0.08);
+    --slate-20: rgba(30,45,61,0.15);
+    --slate-40: rgba(30,45,61,0.4);
+    --slate-60: rgba(30,45,61,0.6);
+    --terra-10: rgba(193,97,74,0.1);
+    --terra-15: rgba(193,97,74,0.15);
+    --white-60: rgba(255,255,255,0.6);
+    --white-40: rgba(255,255,255,0.4);
+    --white-15: rgba(255,255,255,0.15);
+    --white-08: rgba(255,255,255,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--slate);
+    color: var(--white);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .deck { width: 100vw; height: 100vh; position: relative; }
+
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    padding: 60px 80px;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .slide.active { display: flex; opacity: 1; }
+
+  .slide--dark { background: var(--slate); color: var(--white); }
+  .slide--light { background: var(--white); color: var(--black); }
+
+  .slide-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 52px;
+    font-weight: 600;
+    line-height: 1.15;
+    margin-bottom: 24px;
+  }
+
+  h1 em { font-style: italic; color: var(--terra); }
+
+  h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 36px;
+    font-weight: 600;
+    line-height: 1.25;
+    margin-bottom: 20px;
+  }
+
+  .slide--light h2 { color: var(--slate); }
+
+  h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .slide--dark h3 { color: var(--white); }
+  .slide--light h3 { color: var(--slate); }
+
+  p, li {
+    font-size: 18px;
+    line-height: 1.65;
+    font-weight: 300;
+  }
+
+  .lead {
+    font-size: 18px;
+    line-height: 1.65;
+    font-weight: 300;
+    max-width: 800px;
+    color: var(--slate-60);
+  }
+
+  .subtitle {
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--white-60);
+  }
+
+  blockquote {
+    border-left: 3px solid var(--terra);
+    padding: 16px 0 16px 24px;
+    margin: 20px 0;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 20px;
+    font-style: italic;
+    line-height: 1.6;
+    max-width: 750px;
+    color: var(--slate);
+  }
+
+  .slide--dark blockquote { color: var(--white); }
+
+  /* David quotes on white */
+  .david-quote {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.45;
+    color: var(--terra);
+    margin-bottom: 6px;
+  }
+
+  .david-context {
+    font-size: 13px;
+    color: var(--slate-40);
+    margin-bottom: 20px;
+    font-weight: 400;
+  }
+
+  /* Stats */
+  .stat-row { display: flex; gap: 40px; margin: 24px 0; }
+  .stat-block { flex: 1; }
+
+  .stat-number {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 48px;
+    font-weight: 600;
+    color: var(--terra);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-desc {
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 400;
+    color: var(--slate-60);
+  }
+
+  .stat-source {
+    font-size: 11px;
+    color: var(--slate-40);
+    margin-top: 4px;
+  }
+
+  /* Layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    margin-top: 20px;
+  }
+
+  ul { list-style: none; padding: 0; }
+
+  ul li {
+    padding: 5px 0 5px 20px;
+    position: relative;
+    font-size: 16px;
+  }
+
+  ul li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 13px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--terra);
+  }
+
+  /* Drivers row */
+  .drivers { display: flex; gap: 0; margin: 20px 0; }
+
+  .driver {
+    flex: 1;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.35;
+    border-right: 1px solid var(--slate-10);
+    color: var(--slate);
+  }
+
+  .driver:last-child { border-right: none; }
+
+  .driver-num {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px;
+    color: var(--terra);
+    margin-bottom: 4px;
+  }
+
+  /* Value cards */
+  .value-card { margin-bottom: 18px; }
+  .value-card h3 { font-size: 16px; margin-bottom: 4px; }
+  .value-card p { font-size: 15px; line-height: 1.55; max-width: 520px; color: var(--slate-60); }
+
+  .divider {
+    width: 60px;
+    height: 2px;
+    background: var(--terra);
+    margin: 20px 0;
+  }
+
+  /* Callout box for light slides */
+  .callout-box {
+    background: var(--slate);
+    color: var(--white);
+    padding: 22px 26px;
+    border-radius: 6px;
+    margin-top: 20px;
+  }
+
+  .callout-box .bridge-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 8px;
+  }
+
+  .callout-box p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--white-60);
+  }
+
+  .callout-box strong { color: var(--white); }
+
+  .callout-box .drivers .driver {
+    color: var(--white-60);
+    border-right-color: var(--white-15);
+  }
+
+  .callout-box .driver-num { color: var(--terra); }
+
+  /* Banner highlight */
+  .banner {
+    background: var(--terra-10);
+    border-left: 3px solid var(--terra);
+    padding: 14px 20px;
+    border-radius: 0 6px 6px 0;
+    margin: 16px 0;
+  }
+
+  .banner p {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--slate);
+  }
+
+  /* Data box */
+  .data-box {
+    background: var(--slate-10);
+    padding: 20px 24px;
+    border-radius: 6px;
+    border-top: 2px solid var(--terra);
+  }
+
+  /* CTA */
+  .cta-line {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--terra);
+    margin-top: 30px;
+    max-width: 650px;
+  }
+
+  .slide--dark .cta-line { color: var(--terra); }
+
+  /* Navigation */
+  .nav {
+    position: fixed;
+    bottom: 24px; right: 30px;
+    display: flex; gap: 8px;
+    z-index: 100;
+  }
+
+  .nav button {
+    background: var(--white-08);
+    border: 1px solid var(--white-15);
+    color: var(--white);
+    width: 40px; height: 40px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+  }
+
+  .nav button:hover { background: var(--white-15); }
+
+  .slide-counter {
+    position: fixed;
+    bottom: 30px; left: 30px;
+    font-size: 12px;
+    color: var(--white-40);
+    z-index: 100;
+  }
+
+  /* Section 5 labels */
+  .section5-label {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-bottom: 16px;
+    background: var(--terra-10);
+    color: var(--terra);
+  }
+
+  /* Positioning line */
+  .pos-line {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px;
+    font-style: italic;
+    line-height: 1.45;
+    color: var(--slate);
+    margin-bottom: 28px;
+    max-width: 700px;
+    padding: 20px 24px;
+    background: var(--slate-10);
+    border-left: 3px solid var(--terra);
+    border-radius: 0 6px 6px 0;
+  }
+
+  /* Beliefs list */
+  .beliefs { list-style: none; padding: 0; }
+
+  .beliefs li {
+    padding: 8px 0 8px 24px;
+    font-size: 15px;
+    line-height: 1.5;
+    border-bottom: 1px solid var(--slate-10);
+    color: var(--slate-60);
+    position: relative;
+  }
+
+  .beliefs li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 16px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--terra);
+  }
+
+  .beliefs li:last-child { border-bottom: none; }
+
+  .beliefs li .belief-head {
+    font-weight: 600;
+    color: var(--slate);
+    border-bottom: 2px solid var(--terra);
+    padding-bottom: 1px;
+  }
+
+  /* Method nodes on white */
+  .method-nodes {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .node {
+    flex: 1;
+    padding: 16px;
+    background: var(--slate-10);
+    border-radius: 6px;
+    border-top: 2px solid var(--terra);
+  }
+
+  .node-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 6px;
+  }
+
+  .node p {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--slate-60);
+  }
+
+  /* Footnote */
+  .driver-footnote {
+    font-size: 12px;
+    margin-top: 10px;
+    color: var(--slate-40);
+  }
+
+  .slide--dark .driver-footnote { color: var(--white-40); }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- SLIDE 1: Title (DARK) -->
+  <div class="slide slide--dark active" id="s1">
+    <div class="slide-label">Workforce Empowerment</div>
+    <h1>The Missing Layer:<br><em>Building Stronger<br>from the Inside Out</em></h1>
+    <div class="divider"></div>
+    <p class="subtitle">A partnership proposal for the Sisters Business Association</p>
+  </div>
+
+  <!-- SLIDE 2: We Heard You (WHITE) -->
+  <div class="slide slide--light" id="s2">
+    <div class="slide-label">We Heard You</div>
+    <h2>The reality you described</h2>
+    <div class="two-col" style="margin-top: 10px;">
+      <div class="col">
+        <div class="david-quote">"Staffing, staffing, staffing, staffing."</div>
+        <div class="david-context">Childcare. Housing. Healthcare. All underneath.</div>
+
+        <div class="david-quote">"There was no nest egg last year."</div>
+        <div class="david-context">Flat fire shut summer down. No snow all winter. ODOT blocked downtown.</div>
+
+        <div class="david-quote">"Less than 25 an hour... very expensive to live here."</div>
+        <div class="david-context">Can't move wages up. Three of fifteen might last a year.</div>
+
+        <div class="david-quote">"The bottom line is the culture, but it's also the community."</div>
+      </div>
+      <div class="col">
+        <div class="data-box">
+          <h3 style="margin-top: 0;">Notable data points</h3>
+          <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+            <svg width="28" height="28" viewBox="0 0 28 28" style="flex-shrink: 0; margin-top: 2px;"><circle cx="14" cy="14" r="12" fill="var(--terra-10)" stroke="var(--terra)" stroke-width="1.2"/><text x="14" y="18" text-anchor="middle" font-size="10" font-weight="700" fill="var(--terra)" font-family="Inter, sans-serif">65+</text></svg>
+            <div><strong style="font-size: 15px; color: var(--slate);">39% of residents are 65+</strong><br><span style="font-size: 13px; color: var(--slate-40);">A service and retirement economy in transition.</span></div>
+          </div>
+          <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+            <svg width="28" height="28" viewBox="0 0 28 28" style="flex-shrink: 0; margin-top: 2px;"><rect x="4" y="10" width="20" height="12" rx="2" fill="var(--terra-10)" stroke="var(--terra)" stroke-width="1.2"/><path d="M4 14 L14 7 L24 14" stroke="var(--terra)" stroke-width="1.2" fill="none"/></svg>
+            <div><strong style="font-size: 15px; color: var(--slate);">Housing more expensive than Bend</strong><br><span style="font-size: 13px; color: var(--slate-40);">1BR rent: $1,780 to $2,465/mo.</span></div>
+          </div>
+          <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+            <svg width="28" height="28" viewBox="0 0 28 28" style="flex-shrink: 0; margin-top: 2px;"><path d="M8 22 C10 14, 12 10, 14 6 C16 10, 18 14, 20 22" stroke="var(--terra)" stroke-width="1.2" fill="var(--terra-10)"/><path d="M10 22 C12 18, 14 16, 14 14 C14 16, 16 18, 18 22" stroke="var(--terra)" stroke-width="0.8" fill="none" opacity="0.5"/></svg>
+            <div><strong style="font-size: 15px; color: var(--slate);">Flat Fire: $29M</strong><br><span style="font-size: 13px; color: var(--slate-40);">Peak tourism season lost.</span></div>
+          </div>
+          <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+            <svg width="28" height="28" viewBox="0 0 28 28" style="flex-shrink: 0; margin-top: 2px;"><path d="M6 20 L14 6 L22 20Z" stroke="var(--terra)" stroke-width="1.2" fill="var(--terra-10)"/><circle cx="14" cy="11" r="1.5" fill="var(--terra)" opacity="0.5"/><line x1="11" y1="16" x2="17" y2="16" stroke="var(--terra)" stroke-width="1" opacity="0.4"/></svg>
+            <div><strong style="font-size: 15px; color: var(--slate);">Hoodoo lost season: ~$8M</strong><br><span style="font-size: 13px; color: var(--slate-40);">~350 jobs affected.</span></div>
+          </div>
+          <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <svg width="28" height="28" viewBox="0 0 28 28" style="flex-shrink: 0; margin-top: 2px;"><rect x="4" y="8" width="20" height="12" rx="2" fill="var(--terra-10)" stroke="var(--terra)" stroke-width="1.2"/><line x1="4" y1="14" x2="24" y2="14" stroke="var(--terra)" stroke-width="1.2" stroke-dasharray="3,2"/></svg>
+            <div><strong style="font-size: 15px; color: var(--slate);">ODOT: 30% revenue drops</strong><br><span style="font-size: 13px; color: var(--slate-40);">Construction blocked downtown access.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: The Business Dimension (WHITE) -->
+  <div class="slide slide--light" id="s3">
+    <div style="display: flex; gap: 40px; align-items: center; flex: 1;">
+      <div style="flex: 1; min-width: 0;">
+        <div class="slide-label">The Business Dimension</div>
+        <h2>Where most of the attention goes: the Business System</h2>
+        <p class="lead" style="margin-bottom: 20px;">Most business owners focus almost entirely on one dimension: the <strong><em>Business System</em></strong>. Pricing. Staffing. Scheduling. Workflows. SOPs. Marketing.</p>
+        <p class="lead" style="margin-bottom: 20px;">That's natural. It's what feels urgent. The SBA's perks calendar reflects this too: finance, marketing, HR, operations.</p>
+        <div class="divider"></div>
+        <blockquote>The instinct is to solve business problems with business solutions.</blockquote>
+      </div>
+      <div style="flex: 0 0 300px; display: flex; justify-content: center;">
+        <!-- Brain: left hemisphere (Business System) highlighted -->
+        <svg viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg" style="width: 280px;">
+          <!-- Left hemisphere - ACTIVE -->
+          <path d="M136 28 C100 30, 68 50, 48 80 C28 110, 22 148, 26 178 C30 212, 44 240, 68 258 C88 272, 112 280, 136 282" fill="var(--slate)" stroke="var(--slate)" stroke-width="1.5"/>
+          <!-- Brain fold lines (left) -->
+          <path d="M120 50 C95 66, 78 78, 58 90" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+          <path d="M130 78 C105 94, 75 108, 45 128" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+          <path d="M132 118 C105 128, 72 142, 38 156" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+          <path d="M130 158 C100 168, 68 180, 40 192" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+          <path d="M128 198 C100 210, 72 224, 52 236" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+          <path d="M124 238 C100 248, 80 258, 66 264" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.15" stroke-linecap="round"/>
+
+          <!-- Right hemisphere - MUTED -->
+          <path d="M144 28 C180 30, 212 50, 232 80 C252 110, 258 148, 254 178 C250 212, 236 240, 212 258 C192 272, 168 280, 144 282" fill="var(--slate-10)" stroke="var(--slate-20)" stroke-width="1.5"/>
+          <!-- Brain fold lines (right) -->
+          <path d="M160 50 C185 66, 202 78, 222 90" stroke="var(--slate)" stroke-width="1" fill="none" opacity="0.08" stroke-linecap="round"/>
+          <path d="M150 78 C175 94, 205 108, 235 128" stroke="var(--slate)" stroke-width="1" fill="none" opacity="0.08" stroke-linecap="round"/>
+          <path d="M148 118 C175 128, 208 142, 242 156" stroke="var(--slate)" stroke-width="1" fill="none" opacity="0.08" stroke-linecap="round"/>
+          <path d="M150 158 C180 168, 212 180, 240 192" stroke="var(--slate)" stroke-width="1" fill="none" opacity="0.08" stroke-linecap="round"/>
+          <path d="M152 198 C180 210, 208 224, 228 236" stroke="var(--slate)" stroke-width="1" fill="none" opacity="0.08" stroke-linecap="round"/>
+
+          <!-- Center divide -->
+          <line x1="140" y1="24" x2="140" y2="286" stroke="var(--slate-20)" stroke-width="1.5"/>
+
+          <!-- Labels -->
+          <text x="80" y="306" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="var(--slate)" letter-spacing="1.5">BUSINESS</text>
+          <text x="80" y="318" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="var(--slate)" letter-spacing="1.5">SYSTEM</text>
+          <text x="200" y="306" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="400" fill="var(--slate-40)" letter-spacing="1.5">OWNER</text>
+          <text x="200" y="318" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="400" fill="var(--slate-40)" letter-spacing="1.5">SYSTEM</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: The Owner Dimension (WHITE) -->
+  <div class="slide slide--light" id="s4">
+    <div style="display: flex; gap: 40px; align-items: center; flex: 1;">
+      <div style="flex: 1; min-width: 0;">
+        <div class="slide-label">The Owner Dimension</div>
+        <h2>The other half: the Owner System</h2>
+        <p class="lead" style="margin-bottom: 20px;">Energy. Attention. Emotional regulation. Judgment. Confidence. Communication. Boundaries. Decision-making.</p>
+        <p class="lead" style="margin-bottom: 20px;">When the <strong><em>Owner System</em></strong> is overloaded, the Business System becomes harder to improve.</p>
+        <div class="divider"></div>
+        <blockquote>These business problems are real. But underneath each one, there's a human dimension that's either making it harder or easier to solve. Most of the energy goes to the business side. Almost none goes to the human side. That's the gap.</blockquote>
+      </div>
+      <div style="flex: 0 0 300px; display: flex; justify-content: center;">
+        <!-- Brain: right hemisphere (Owner System) highlighted -->
+        <svg viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg" style="width: 280px;">
+          <!-- Left hemisphere - MUTED -->
+          <path d="M136 28 C100 30, 68 50, 48 80 C28 110, 22 148, 26 178 C30 212, 44 240, 68 258 C88 272, 112 280, 136 282" fill="var(--slate-10)" stroke="var(--slate-20)" stroke-width="1.5"/>
+          <path d="M120 50 C95 66, 78 78, 58 90" stroke="var(--slate)" stroke-width="1" fill="none" opacity="0.08" stroke-linecap="round"/>
+          <path d="M130 78 C105 94, 75 108, 45 128" stroke="var(--slate)" stroke-width="1" fill="none" opacity="0.08" stroke-linecap="round"/>
+          <path d="M132 118 C105 128, 72 142, 38 156" stroke="var(--slate)" stroke-width="1" fill="none" opacity="0.08" stroke-linecap="round"/>
+          <path d="M130 158 C100 168, 68 180, 40 192" stroke="var(--slate)" stroke-width="1" fill="none" opacity="0.08" stroke-linecap="round"/>
+          <path d="M128 198 C100 210, 72 224, 52 236" stroke="var(--slate)" stroke-width="1" fill="none" opacity="0.08" stroke-linecap="round"/>
+
+          <!-- Right hemisphere - ACTIVE -->
+          <path d="M144 28 C180 30, 212 50, 232 80 C252 110, 258 148, 254 178 C250 212, 236 240, 212 258 C192 272, 168 280, 144 282" fill="var(--terra)" stroke="#a8523e" stroke-width="1.5"/>
+          <path d="M160 50 C185 66, 202 78, 222 90" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+          <path d="M150 78 C175 94, 205 108, 235 128" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+          <path d="M148 118 C175 128, 208 142, 242 156" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+          <path d="M150 158 C180 168, 212 180, 240 192" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+          <path d="M152 198 C180 210, 208 224, 228 236" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+          <path d="M156 238 C180 248, 200 258, 214 264" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.15" stroke-linecap="round"/>
+
+          <!-- Center divide -->
+          <line x1="140" y1="24" x2="140" y2="286" stroke="var(--slate-20)" stroke-width="1.5"/>
+
+          <!-- Labels -->
+          <text x="80" y="306" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="400" fill="var(--slate-40)" letter-spacing="1.5">BUSINESS</text>
+          <text x="80" y="318" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="400" fill="var(--slate-40)" letter-spacing="1.5">SYSTEM</text>
+          <text x="200" y="306" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="var(--terra)" letter-spacing="1.5">OWNER</text>
+          <text x="200" y="318" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="var(--terra)" letter-spacing="1.5">SYSTEM</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: The Evidence (WHITE) -->
+  <div class="slide slide--light" id="s5">
+    <div class="slide-label">The Evidence</div>
+    <h2>What happens when the Owner System is neglected</h2>
+    <div class="stat-row">
+      <div class="stat-block">
+        <div class="stat-number">53%</div>
+        <div class="stat-desc">of small business owners felt emotionally drained or burned out in the past year</div>
+        <div class="stat-source">Bluevine / Centiment, 2026</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">68%</div>
+        <div class="stat-desc">delayed or avoided a major business decision due to stress: hiring, expansion, equipment</div>
+        <div class="stat-source">Bluevine / Centiment, 2026</div>
+      </div>
+    </div>
+    <div class="banner">
+      <p>Under stress, the brain shifts from planning and decision-making to habitual, emotional responses. Even mild uncontrollable stress causes rapid loss of prefrontal cortex function. <span style="font-size: 11px; color: var(--slate-40);">(Arnsten, Nature Reviews Neuroscience, 2009)</span></p>
+    </div>
+
+    <div class="callout-box">
+      <div class="bridge-label">The Staffing Connection</div>
+      <p>Gallup found that leaders account for <strong>70% of the variance</strong> in whether employees are engaged or checked out. How the owner shows up determines how the team shows up. Frederick Herzberg's research confirms what retains people isn't pay: it's recognition, meaning, autonomy, growth. Organizations ranked as best places to work outperform the stock market by over 3x. The five drivers every ranking system converges on:</p>
+      <div class="drivers">
+        <div class="driver"><svg width="22" height="22" viewBox="0 0 22 22" style="margin-bottom: 4px;"><path d="M11 3 L13 8 L18.5 8 L14 11.5 L15.5 17 L11 13.5 L6.5 17 L8 11.5 L3.5 8 L9 8Z" fill="var(--terra)" opacity="0.7"/></svg><br>Trustworthy<br>leadership</div>
+        <div class="driver"><svg width="22" height="22" viewBox="0 0 22 22" style="margin-bottom: 4px;"><line x1="11" y1="3" x2="11" y2="19" stroke="var(--terra)" stroke-width="1.5" opacity="0.7"/><line x1="5" y1="11" x2="17" y2="11" stroke="var(--terra)" stroke-width="1.5" opacity="0.7"/><circle cx="7" cy="7" r="2.5" fill="none" stroke="var(--terra)" stroke-width="1.2" opacity="0.5"/><circle cx="15" cy="15" r="2.5" fill="none" stroke="var(--terra)" stroke-width="1.2" opacity="0.5"/></svg><br>Fairness<br>& equity</div>
+        <div class="driver"><svg width="22" height="22" viewBox="0 0 22 22" style="margin-bottom: 4px;"><circle cx="11" cy="8" r="4" fill="none" stroke="var(--terra)" stroke-width="1.3" opacity="0.7"/><path d="M4 19 C4 14, 7 12, 11 12 C15 12, 18 14, 18 19" fill="none" stroke="var(--terra)" stroke-width="1.3" opacity="0.7"/><path d="M9 7.5 C9.5 9, 11 10, 11 10 C11 10, 12.5 9, 13 7.5" fill="none" stroke="var(--terra)" stroke-width="1" opacity="0.5"/></svg><br>Respect & care<br>for the whole person</div>
+        <div class="driver"><svg width="22" height="22" viewBox="0 0 22 22" style="margin-bottom: 4px;"><circle cx="7" cy="9" r="3" fill="none" stroke="var(--terra)" stroke-width="1.2" opacity="0.7"/><circle cx="15" cy="9" r="3" fill="none" stroke="var(--terra)" stroke-width="1.2" opacity="0.7"/><circle cx="11" cy="15" r="3" fill="none" stroke="var(--terra)" stroke-width="1.2" opacity="0.7"/></svg><br>Belonging &<br>camaraderie</div>
+        <div class="driver"><svg width="22" height="22" viewBox="0 0 22 22" style="margin-bottom: 4px;"><path d="M11 3 L11 15" stroke="var(--terra)" stroke-width="1.5" opacity="0.7"/><path d="M7 7 L11 3 L15 7" stroke="var(--terra)" stroke-width="1.5" fill="none" opacity="0.7" stroke-linecap="round" stroke-linejoin="round"/><line x1="5" y1="19" x2="17" y2="19" stroke="var(--terra)" stroke-width="1.5" opacity="0.5"/></svg><br>Pride, meaning,<br>growth, recognition</div>
+      </div>
+      <p style="margin-top: 6px;">Every one traces back to how the owner shows up. When we spend time addressing the Owner System, we also begin to help address the staffing challenge.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Who We Are (WHITE) -->
+  <div class="slide slide--light" id="s6">
+    <div class="slide-label">Who We Are</div>
+    <div class="pos-line">"Most organizations invest in everything except the people carrying the work. We start there, from the inside out."</div>
+    <div class="two-col">
+      <div class="col">
+        <h3>What we believe</h3>
+        <ul class="beliefs">
+          <li><span class="belief-head">Human growth belongs at work.</span> A third of our lives is spent there.</li>
+          <li><span class="belief-head">Change starts inside the individual.</span> Each person is closer to the truth of what they need than anyone outside them.</li>
+          <li><span class="belief-head">The human operating layer is the foundation.</span> Strategy, tools, and process only perform as well as the humans running them under pressure.</li>
+          <li><span class="belief-head">Regulation before reframing. Reframing before action.</span> Solving from a distressed state produces fragile outcomes.</li>
+          <li><span class="belief-head">People are complex. Workplaces don't get to opt out of that.</span> We work with the full range of who people are, not a sanitized version.</li>
+          <li><span class="belief-head">Human operating capacity can be moved, deliberately.</span> This is the conviction at the center of everything we do.</li>
+          <li><span class="belief-head">Disruption is the opportunity, not the threat.</span> We help usher in a new workplace culture rather than patch the old one.</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h3>How we work</h3>
+        <p style="font-size: 15px; line-height: 1.6; margin-bottom: 16px; color: var(--slate-60);">The principle that carries across every layer of a business: individual regulation before team application before organizational effectiveness. This is the sequencing discipline that makes the methodology hold under real conditions.</p>
+        <p style="font-size: 15px; line-height: 1.6; margin-bottom: 16px; color: var(--slate-60);">This is performance optimization, not wellness and not therapy.</p>
+
+        <h3 style="margin-top: 20px;">Our methodology</h3>
+        <div class="method-nodes">
+          <div class="node">
+            <svg width="26" height="26" viewBox="0 0 26 26" style="margin-bottom: 6px;"><path d="M13 4 C13 4, 8 8, 8 13 C8 16, 10 19, 13 22 C16 19, 18 16, 18 13 C18 8, 13 4, 13 4Z" fill="var(--terra-10)" stroke="var(--terra)" stroke-width="1.2"/><path d="M10 13 Q13 10 16 13" fill="none" stroke="var(--terra)" stroke-width="1" opacity="0.5"/></svg>
+            <div class="node-label">Regulation</div>
+            <p>Body, nervous system, emotions, energy. We get grounded first.</p>
+          </div>
+          <div class="node">
+            <svg width="26" height="26" viewBox="0 0 26 26" style="margin-bottom: 6px;"><rect x="4" y="4" width="18" height="18" rx="2" fill="none" stroke="var(--terra)" stroke-width="1.2"/><rect x="7" y="7" width="12" height="12" rx="1" fill="var(--terra-10)" stroke="var(--terra)" stroke-width="0.8"/><circle cx="13" cy="13" r="3" fill="none" stroke="var(--terra)" stroke-width="1" opacity="0.6"/></svg>
+            <div class="node-label">Reframing</div>
+            <p>Personal narrative and outlook. From a regulated state, patterns become visible.</p>
+          </div>
+          <div class="node">
+            <svg width="26" height="26" viewBox="0 0 26 26" style="margin-bottom: 6px;"><path d="M6 13 L18 13" stroke="var(--terra)" stroke-width="1.5"/><path d="M14 8 L20 13 L14 18" fill="none" stroke="var(--terra)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="13" r="2" fill="var(--terra-10)" stroke="var(--terra)" stroke-width="1"/></svg>
+            <div class="node-label">Action</div>
+            <p>Intentional action and execution. Only from clarity can action sustain itself.</p>
+          </div>
+        </div>
+        <p style="font-size: 13px; color: var(--slate-40); margin-top: 12px;">We start with the individual and work through the layers: team, program, organization.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: For the Individual Owner (WHITE) -->
+  <div class="slide slide--light" id="s7">
+    <div class="slide-label">What This Means for the SBA</div>
+    <span class="section5-label">For the Individual Owner</span>
+    <h2>See what's real. Act on what matters.</h2>
+    <div class="two-col" style="margin-top: 10px;">
+      <div class="col">
+        <div class="value-card">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;"><svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="var(--terra)" stroke-width="1.3"/><circle cx="12" cy="12" r="4" fill="none" stroke="var(--terra)" stroke-width="1" opacity="0.5"/><circle cx="12" cy="12" r="1.5" fill="var(--terra)"/></svg><h3 style="margin-bottom: 0;">See what's real</h3></div>
+          <p>Most owners operate on unexamined assumptions. Some are grounded in business reality. Others are driven by stress responses and limiting beliefs. We help owners distinguish between what's actually happening and the story they're telling themselves.</p>
+        </div>
+        <div class="value-card">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;"><svg width="24" height="24" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="var(--terra)" stroke-width="1.3"/><line x1="3" y1="12" x2="21" y2="12" stroke="var(--terra)" stroke-width="0.8" opacity="0.4"/><line x1="12" y1="3" x2="12" y2="21" stroke="var(--terra)" stroke-width="0.8" opacity="0.4"/><text x="7.5" y="9.5" text-anchor="middle" font-size="5" font-weight="700" fill="var(--terra)" font-family="Inter,sans-serif">C</text><text x="16.5" y="9.5" text-anchor="middle" font-size="5" font-weight="700" fill="var(--terra)" font-family="Inter,sans-serif">I</text><text x="7.5" y="18.5" text-anchor="middle" font-size="5" font-weight="700" fill="var(--terra)" font-family="Inter,sans-serif">M</text><text x="16.5" y="18.5" text-anchor="middle" font-size="5" font-weight="700" fill="var(--terra)" font-family="Inter,sans-serif">R</text></svg><h3 style="margin-bottom: 0;">Surface what matters</h3></div>
+          <p>The friction map sorts business pain points into what you can Control, Influence, Monitor, or Release. Rooted in Stoic philosophy and cognitive behavioral therapy. Owners leave with clarity on where to focus.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="value-card">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;"><svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="var(--terra)" stroke-width="1.3"/><circle cx="12" cy="12" r="5.5" fill="none" stroke="var(--terra)" stroke-width="0.8" opacity="0.4"/><circle cx="12" cy="12" r="2.5" fill="none" stroke="var(--terra)" stroke-width="0.8" opacity="0.3"/><path d="M12 3 C9 7, 8 9, 8 12 C8 15, 9 17, 12 21" fill="none" stroke="var(--terra)" stroke-width="0.8" opacity="0.3"/><path d="M12 3 C15 7, 16 9, 16 12 C16 15, 15 17, 12 21" fill="none" stroke="var(--terra)" stroke-width="0.8" opacity="0.3"/></svg><h3 style="margin-bottom: 0;">See the patterns underneath</h3></div>
+          <p>A confidential intake surfaces shared themes anonymously. Pressure archetypes help owners recognize their default under stress: the Controller, the Firefighter, the Avoider, the Pleaser, the Perfectionist. The psychological contract audit surfaces unspoken expectations that may no longer serve them.</p>
+        </div>
+      </div>
+    </div>
+    <p class="driver-footnote">Best Places to Work Differentiator: respect and care for the whole person + pride, meaning, and growth</p>
+  </div>
+
+  <!-- SLIDE 8: For the Community of Owners (WHITE) -->
+  <div class="slide slide--light" id="s8">
+    <div class="slide-label">What This Means for the SBA</div>
+    <span class="section5-label">For the Community of Owners</span>
+    <h2>Deepen what's already working</h2>
+    <div class="two-col" style="margin-top: 10px;">
+      <div class="col">
+        <div class="value-card">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;"><svg width="24" height="24" viewBox="0 0 24 24"><circle cx="7" cy="10" r="3.5" fill="none" stroke="var(--terra)" stroke-width="1.2" opacity="0.6"/><circle cx="17" cy="10" r="3.5" fill="none" stroke="var(--terra)" stroke-width="1.2" opacity="0.6"/><circle cx="12" cy="16" r="3.5" fill="none" stroke="var(--terra)" stroke-width="1.2" opacity="0.6"/><line x1="10" y1="10" x2="14" y2="10" stroke="var(--terra)" stroke-width="0.8" opacity="0.4"/><line x1="9" y1="13" x2="12" y2="16" stroke="var(--terra)" stroke-width="0.8" opacity="0.4"/><line x1="15" y1="13" x2="12" y2="16" stroke="var(--terra)" stroke-width="0.8" opacity="0.4"/></svg><h3 style="margin-bottom: 0;">Beyond networking</h3></div>
+          <p>The mix-and-mingles and perks already bring people together. We take that further with structured peer work: friction mapping together, cross-business advisory circles, shared exercises. Trust and mutual support that goes beyond what networking alone can reach. Owners discover their problems aren't unique.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="value-card">
+          <h3>And in a place like Sisters, the stakes are higher</h3>
+          <p style="color: var(--slate-60);">The deeper connection this peer work builds matters even more in a small town, where three dynamics amplify everything:</p>
+          <p style="margin-top: 12px; color: var(--slate-60);"><span style="display: flex; align-items: flex-start; gap: 8px;"><svg width="20" height="20" viewBox="0 0 20 20" style="flex-shrink: 0; margin-top: 2px;"><circle cx="10" cy="8" r="4" fill="none" stroke="var(--terra)" stroke-width="1.2"/><path d="M4 18 C4 14, 6 12, 10 12 C14 12, 16 14, 16 18" fill="none" stroke="var(--terra)" stroke-width="1.2"/></svg><span><strong style="color: var(--slate);">Owner isolation is real</strong> in a town of 3,000. There's no built-in peer group for the weight owners carry.</span></span></p>
+          <p style="margin-top: 12px; color: var(--slate-60);"><span style="display: flex; align-items: flex-start; gap: 8px;"><svg width="20" height="20" viewBox="0 0 20 20" style="flex-shrink: 0; margin-top: 2px;"><path d="M3 14 C3 14, 5 6, 10 6 C15 6, 17 10, 17 10" fill="none" stroke="var(--terra)" stroke-width="1.2"/><path d="M14 7 L17 10 L14 13" fill="none" stroke="var(--terra)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong style="color: var(--slate);">Reputation is the labor market.</strong> When an owner leads better, word travels. In Sisters, that's the most powerful recruiting tool available.</span></span></p>
+          <p style="margin-top: 12px; color: var(--slate-60);"><span style="display: flex; align-items: flex-start; gap: 8px;"><svg width="20" height="20" viewBox="0 0 20 20" style="flex-shrink: 0; margin-top: 2px;"><circle cx="6" cy="8" r="2.5" fill="none" stroke="var(--terra)" stroke-width="1.1"/><circle cx="14" cy="8" r="2.5" fill="none" stroke="var(--terra)" stroke-width="1.1"/><circle cx="10" cy="14" r="2.5" fill="none" stroke="var(--terra)" stroke-width="1.1"/></svg><span><strong style="color: var(--slate);">Belonging keeps people.</strong> Seasonal workers have options. The differentiator isn't pay. It's whether they feel part of something.</span></span></p>
+        </div>
+      </div>
+    </div>
+    <p class="driver-footnote">Best Places to Work Differentiator: belonging and camaraderie + fairness and equity</p>
+  </div>
+
+  <!-- SLIDE 9: For the SBA Organization (WHITE) -->
+  <div class="slide slide--light" id="s9">
+    <div class="slide-label">What This Means for the SBA</div>
+    <span class="section5-label">For the SBA Organization</span>
+    <h2>Strengthen what you've built</h2>
+    <div class="two-col" style="margin-top: 10px;">
+      <div class="col">
+        <div class="value-card">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;"><svg width="24" height="24" viewBox="0 0 24 24"><rect x="3" y="14" width="4" height="7" rx="1" fill="var(--terra)" opacity="0.3"/><rect x="10" y="9" width="4" height="12" rx="1" fill="var(--terra)" opacity="0.5"/><rect x="17" y="4" width="4" height="17" rx="1" fill="var(--terra)" opacity="0.7"/></svg><h3 style="margin-bottom: 0;">Sharpen the signal</h3></div>
+          <p>Our structured process surfaces patterns you might not hear in casual settings. Aggregated, anonymous themes become data-backed signals for what programming the SBA delivers next.</p>
+        </div>
+        <div class="value-card">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;"><svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="var(--terra)" stroke-width="1.3"/><circle cx="12" cy="12" r="5" fill="none" stroke="var(--terra)" stroke-width="0.8" opacity="0.4"/><circle cx="12" cy="12" r="1.5" fill="var(--terra)"/></svg><h3 style="margin-bottom: 0;">Owner System development</h3></div>
+          <p>The board are volunteers running their own businesses. We handle the Owner System and human-layer side of member programming: the dimension the SBA doesn't currently have the bandwidth or expertise to deliver.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="value-card">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M4 20 L12 5 L20 20Z" fill="none" stroke="var(--terra)" stroke-width="1.3"/><line x1="12" y1="5" x2="12" y2="14" stroke="var(--terra)" stroke-width="0.8" opacity="0.4"/></svg><h3 style="margin-bottom: 0;">Advance the founding mission</h3></div>
+          <p>The SBA was built because the Chamber fell short on real peer support. We strengthen what makes the SBA different. Not a new direction. A deeper investment in the one you already chose.</p>
+        </div>
+        <div class="value-card">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;"><svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="var(--terra)" stroke-width="1.3"/><path d="M6 12 C8 8, 10 6, 12 6 C14 6, 16 8, 18 12" fill="none" stroke="var(--terra)" stroke-width="1" opacity="0.5"/><path d="M6 12 C8 16, 10 18, 12 18 C14 18, 16 16, 18 12" fill="none" stroke="var(--terra)" stroke-width="1" opacity="0.5"/></svg><h3 style="margin-bottom: 0;">Amplify the collective voice</h3></div>
+          <p>A more cohesive, trusting membership can advocate together through city council, the Chamber, and community planning. The SBA becomes a unified force for small business in Sisters.</p>
+        </div>
+      </div>
+    </div>
+    <p class="driver-footnote">Best Places to Work Differentiator: trustworthy leadership</p>
+  </div>
+
+  <!-- SLIDE 10: Close + CTA (DARK) -->
+  <div class="slide slide--dark" id="s10">
+    <div class="slide-label">What's Next</div>
+    <h2>What this could look like</h2>
+    <div style="display: flex; gap: 16px; margin-bottom: 28px; max-width: 750px;">
+      <div style="flex: 1; padding: 16px 18px; background: var(--white-08); border: 1px solid var(--white-15); border-radius: 6px;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 2px; color: var(--terra); margin-bottom: 6px;">STEP 1</div>
+        <p style="font-size: 16px; line-height: 1.5; font-weight: 300;">A presentation to your members.</p>
+      </div>
+      <div style="flex: 1; padding: 16px 18px; background: var(--white-08); border: 1px solid var(--white-15); border-radius: 6px;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 2px; color: var(--terra); margin-bottom: 6px;">STEP 2</div>
+        <p style="font-size: 16px; line-height: 1.5; font-weight: 300;">A pilot with a small group of willing owners.</p>
+      </div>
+      <div style="flex: 1; padding: 16px 18px; background: var(--white-08); border: 1px solid var(--white-15); border-radius: 6px;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 2px; color: var(--terra); margin-bottom: 6px;">STEP 3</div>
+        <p style="font-size: 16px; line-height: 1.5; font-weight: 300;">An ongoing partnership as the SBA's Owner System partner.</p>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <p style="font-size: 18px; line-height: 1.65; font-weight: 300; margin-bottom: 30px; max-width: 700px;">We've put together a detailed proposal covering how an engagement would work, what it includes, and what it looks like for your members.</p>
+    <div class="cta-line">We exist to restore agency and build capacity in the people carrying the work, from the inside out.<br><br>For the SBA, that means the people carrying Sisters.</div>
+  </div>
+
+</div>
+
+<!-- Navigation -->
+<div class="slide-counter"><span id="current">1</span> / <span id="total">10</span></div>
+<div class="nav">
+  <button onclick="navigate(-1)" aria-label="Previous slide">&#8592;</button>
+  <button onclick="navigate(1)" aria-label="Next slide">&#8594;</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const navEl = document.querySelector('.nav');
+  const counterEl = document.querySelector('.slide-counter');
+  let current = 0;
+
+  function updateNavColors() {
+    var isLight = slides[current].classList.contains('slide--light');
+    navEl.querySelectorAll('button').forEach(function(b) {
+      if (isLight) {
+        b.style.background = 'rgba(30,45,61,0.08)';
+        b.style.borderColor = 'rgba(30,45,61,0.2)';
+        b.style.color = '#1e2d3d';
+      } else {
+        b.style.background = '';
+        b.style.borderColor = '';
+        b.style.color = '';
+      }
+    });
+    counterEl.style.color = isLight ? 'rgba(30,45,61,0.35)' : '';
+  }
+
+  function showSlide(n) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(n, slides.length - 1));
+    slides[current].classList.add('active');
+    document.getElementById('current').textContent = current + 1;
+    updateNavColors();
+  }
+
+  function navigate(dir) { showSlide(current + dir); }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); navigate(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); navigate(-1); }
+    if (e.key === 'Home') { e.preventDefault(); showSlide(0); }
+    if (e.key === 'End') { e.preventDefault(); showSlide(slides.length - 1); }
+  });
+
+  var touchStartX = 0;
+  document.addEventListener('touchstart', function(e) { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', function(e) {
+    var diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) navigate(diff > 0 ? 1 : -1);
+  });
+</script>
+</body>
+</html>
