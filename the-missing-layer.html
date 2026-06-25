@@ -547,6 +547,30 @@
     color: var(--dark);
     margin-bottom: 4px;
   }
+
+  @media print {
+    body { overflow: visible; height: auto; width: auto; background: white; }
+    .deck { width: auto; height: auto; position: static; }
+    .slide {
+      display: flex !important;
+      opacity: 1 !important;
+      position: relative !important;
+      width: 100% !important;
+      height: 100vh !important;
+      page-break-after: always;
+      break-after: page;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .slide:last-of-type { page-break-after: avoid; }
+    .nav, .slide-counter { display: none !important; }
+    .corner-deco { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .slide--icy, .slide--hero, .callout-banner, .section-badge,
+    [style*="background"] {
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+  }
 </style>
 </head>
 <body>
