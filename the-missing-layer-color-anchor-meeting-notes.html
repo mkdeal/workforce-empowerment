@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Missing Layer - Color Anchor Direction</title>
+<style>
+  :root {
+    --ink: #28123f;
+    --ink-2: #3b1e64;
+    --plum: #241033;
+    --slate: #4d4760;
+    --muted: #756f86;
+    --line: rgba(40, 18, 63, 0.13);
+    --paper: #fff8fb;
+    --white: #ffffff;
+    --cloud: #f0eaf8;
+    --rose: #ff6fb1;
+    --peach: #ff9b6a;
+    --amber: #ffc857;
+    --lime: #b8e85f;
+    --green: #00c98b;
+    --cyan: #1bd7ff;
+    --blue: #4c63ff;
+    --violet: #8a63ff;
+    --lilac: #d7b7ff;
+    --cream: #fff2cf;
+    --glass: rgba(255, 255, 255, 0.72);
+    --glass-strong: rgba(255, 255, 255, 0.9);
+    --shadow: 0 22px 70px rgba(50, 50, 93, 0.16), 0 10px 28px rgba(0, 0, 0, 0.08);
+    --shadow-soft: 0 14px 40px rgba(50, 50, 93, 0.11);
+    --radius: 8px;
+    --display: "Ivar Display", "Canela", "Kinfolk", "Georgia", serif;
+    --mono: "SFMono-Regular", "Roboto Mono", "Cascadia Mono", Consolas, monospace;
+    --sans: "Better Sans", "Forma DJR Text", "Avenir Next", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--plum);
+    font-family: var(--sans);
+    color: var(--ink);
+  }
+
+  .deck { width: 100vw; height: 100vh; position: relative; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    padding: 58px 72px 62px;
+    overflow: hidden;
+    background:
+      linear-gradient(120deg, rgba(255,255,255,0.95), rgba(255,248,251,0.96)),
+      radial-gradient(circle at 12% 18%, rgba(255,111,177,0.2), transparent 28%),
+      radial-gradient(circle at 88% 16%, rgba(27,215,255,0.18), transparent 30%),
+      var(--paper);
+    opacity: 0;
+    transition: opacity 0.42s ease;
+  }
+
+  .slide.active { display: grid; opacity: 1; }
+
+  .slide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(40,18,63,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(40,18,63,0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: linear-gradient(110deg, rgba(0,0,0,0.35), transparent 58%);
+    pointer-events: none;
+  }
+
+  .slide::after {
+    content: "";
+    position: absolute;
+    right: -14vw;
+    top: -18vh;
+    width: 56vw;
+    height: 72vh;
+    transform: rotate(-12deg) skewX(-8deg);
+    background: linear-gradient(135deg, var(--rose), var(--peach) 18%, var(--amber) 34%, var(--green) 52%, var(--cyan) 68%, var(--blue) 82%, var(--violet));
+    border-radius: 24px;
+    filter: saturate(1.1);
+    opacity: 0.92;
+    pointer-events: none;
+  }
+
+  .slide.dark {
+    background:
+      radial-gradient(circle at 18% 22%, rgba(255,111,177,0.22), transparent 30%),
+      radial-gradient(circle at 75% 0%, rgba(27,215,255,0.32), transparent 34%),
+      linear-gradient(135deg, #1a0d2b 0%, #28123f 56%, #3b1e64 100%);
+    color: var(--white);
+  }
+
+  .slide.dark::before {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+  }
+
+  .slide.dark::after { right: -18vw; top: 8vh; opacity: 0.78; }
+
+  .slide-content {
+    position: relative;
+    z-index: 2;
+    align-self: center;
+    width: 100%;
+  }
+
+  .kicker {
+    margin: 0 0 14px;
+    color: var(--violet);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .dark .kicker { color: var(--amber); }
+  h1, h2, h3, p { margin-top: 0; }
+
+  h1 {
+    max-width: 860px;
+    margin-bottom: 22px;
+    color: var(--ink);
+    font-family: var(--display);
+    font-size: clamp(56px, 7vw, 92px);
+    font-weight: 520;
+    line-height: 0.96;
+    letter-spacing: 0;
+  }
+
+  h2 {
+    max-width: 930px;
+    margin-bottom: 20px;
+    color: var(--ink);
+    font-family: var(--display);
+    font-size: clamp(34px, 4.8vw, 62px);
+    font-weight: 520;
+    line-height: 1.02;
+    letter-spacing: 0;
+  }
+
+  h3 {
+    margin-bottom: 8px;
+    color: var(--ink);
+    font-size: 18px;
+    font-weight: 740;
+    line-height: 1.2;
+  }
+
+  .dark h1, .dark h2, .dark h3 { color: var(--white); }
+
+  p, li {
+    color: var(--slate);
+    font-size: 16px;
+    line-height: 1.52;
+  }
+
+  .dark p, .dark li { color: rgba(255,255,255,0.72); }
+  strong { color: inherit; font-weight: 800; }
+
+  .lead {
+    max-width: 760px;
+    color: var(--slate);
+    font-size: 20px;
+    line-height: 1.5;
+  }
+
+  .dark .lead { color: rgba(255,255,255,0.78); }
+
+  .gradient-text {
+    background: linear-gradient(90deg, var(--rose), var(--peach) 18%, var(--amber) 34%, var(--green) 52%, var(--cyan) 68%, var(--blue) 82%, var(--violet));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .panel {
+    background: var(--glass);
+    border: 1px solid rgba(255,255,255,0.68);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(18px);
+  }
+
+  .dark .panel { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+
+  .card {
+    position: relative;
+    min-height: 132px;
+    padding: 22px;
+    overflow: hidden;
+    background: var(--glass-strong);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: linear-gradient(var(--rose), var(--amber), var(--green), var(--cyan), var(--violet));
+  }
+
+  .card p:last-child { margin-bottom: 0; }
+  .dark .card { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.14); }
+
+  .stat {
+    display: flex;
+    min-height: 150px;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    color: var(--white);
+    background: linear-gradient(135deg, var(--plum), var(--violet));
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .stat.alt { background: linear-gradient(135deg, var(--plum), var(--rose)); }
+  .stat.green { background: linear-gradient(135deg, #073a40, var(--green)); }
+  .stat.amber { background: linear-gradient(135deg, var(--plum), var(--amber)); }
+  .stat.cyan { background: linear-gradient(135deg, #11204e, var(--cyan)); }
+
+  .stat-number { color: var(--white); font-size: 42px; font-weight: 820; line-height: 1; }
+  .stat-label { color: rgba(255,255,255,0.8); font-size: 14px; line-height: 1.34; }
+
+  .source {
+    margin-top: 8px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  .dark .source { color: rgba(255,255,255,0.48); }
+
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 7px 12px;
+    color: var(--ink);
+    background: rgba(255,255,255,0.78);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .pill.blue { color: #2240a8; background: rgba(99,91,255,0.12); }
+  .pill.coral { color: #9f2b67; background: rgba(255,111,177,0.16); }
+  .pill.green { color: #006b50; background: rgba(0,208,132,0.16); }
+
+  .quote {
+    padding: 18px 20px;
+    border-left: 4px solid var(--blue);
+    background: rgba(255,255,255,0.78);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    box-shadow: 0 10px 28px rgba(50,50,93,0.08);
+  }
+
+  .quote p { margin-bottom: 6px; color: var(--ink); font-size: 18px; font-weight: 700; }
+  .quote span { display: block; color: var(--muted); font-size: 13px; line-height: 1.35; }
+  .dark .quote { background: rgba(255,255,255,0.08); border-color: var(--cyan); }
+  .dark .quote p { color: var(--white); }
+  .dark .quote span { color: rgba(255,255,255,0.56); }
+
+  .stripe-stack {
+    position: absolute;
+    right: 80px;
+    top: 50%;
+    display: grid;
+    gap: 14px;
+    width: 360px;
+    transform: translateY(-50%) rotate(-4deg);
+    z-index: 3;
+  }
+
+  .stripe-card {
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(20px);
+  }
+
+  .stripe-card:nth-child(1) { border-top: 4px solid var(--rose); }
+  .stripe-card:nth-child(2) { border-top: 4px solid var(--amber); }
+  .stripe-card:nth-child(3) { border-top: 4px solid var(--cyan); }
+  .stripe-card:nth-child(4) { border-top: 4px solid var(--green); }
+
+  .stripe-card b { display: block; color: var(--white); font-size: 20px; line-height: 1.2; }
+  .stripe-card span { display: block; margin-bottom: 5px; color: rgba(255,255,255,0.58); font-family: var(--mono); font-size: 11px; text-transform: uppercase; }
+
+  .wordmark {
+    position: absolute;
+    top: 36px;
+    left: 72px;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 18px;
+    font-weight: 820;
+    letter-spacing: 0;
+  }
+
+  .dark .wordmark { color: var(--white); }
+
+  .mark-dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--rose), var(--amber), var(--cyan), var(--violet));
+    box-shadow: 0 0 0 5px rgba(255,255,255,0.18);
+  }
+
+  .alive-ribbon {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .alive-ribbon span {
+    height: 10px;
+    border-radius: 999px;
+    box-shadow: 0 8px 18px rgba(40,18,63,0.12);
+  }
+
+  .diagram { min-height: 390px; padding: 24px; display: grid; place-items: center; }
+  .hemispheres { display: grid; grid-template-columns: 1fr 1fr; width: min(520px, 100%); gap: 10px; }
+
+  .hemi {
+    min-height: 270px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.42)),
+      repeating-linear-gradient(135deg, transparent 0 12px, rgba(10,37,64,0.05) 12px 13px);
+  }
+
+  .hemi.left { border-radius: 140px 12px 12px 140px; }
+  .hemi.right { border-radius: 12px 140px 140px 12px; }
+  .hemi.active-blue { background: linear-gradient(135deg, var(--cyan), var(--blue)); }
+  .hemi.active-coral { background: linear-gradient(135deg, var(--rose), var(--amber)); }
+  .hemi.active-blue h3, .hemi.active-coral h3, .hemi.active-blue p, .hemi.active-coral p { color: var(--white); }
+
+  .method { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+  .method .card { min-height: 180px; color: var(--white); background: linear-gradient(135deg, var(--plum), var(--violet)); }
+  .method .card:nth-child(2) { background: linear-gradient(135deg, var(--violet), var(--rose)); }
+  .method .card:nth-child(3) { background: linear-gradient(135deg, #073a40, var(--green)); }
+  .method h3, .method p { color: var(--white); }
+
+  .style-token {
+    padding: 16px;
+    min-height: 112px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.72);
+  }
+
+  .swatches { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; margin-top: 10px; }
+  .swatch { height: 54px; border-radius: 6px; border: 1px solid rgba(10,37,64,0.12); }
+  .effect-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+  .effect {
+    padding: 14px;
+    min-height: 106px;
+    border-radius: var(--radius);
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--line);
+  }
+
+  .band {
+    padding: 18px 22px;
+    border-radius: var(--radius);
+    color: var(--white);
+    background: linear-gradient(90deg, var(--plum), var(--violet), var(--rose), var(--amber));
+    box-shadow: var(--shadow);
+  }
+
+  .footer-note {
+    position: absolute;
+    left: 72px;
+    bottom: 28px;
+    z-index: 4;
+    color: rgba(10,37,64,0.42);
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  .dark .footer-note { color: rgba(255,255,255,0.42); }
+
+  .nav { position: fixed; right: 26px; bottom: 24px; z-index: 20; display: flex; gap: 8px; }
+
+  .nav button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 999px;
+    color: var(--white);
+    background: rgba(10,37,64,0.72);
+    box-shadow: 0 8px 22px rgba(10,37,64,0.22);
+    cursor: pointer;
+    font-size: 18px;
+  }
+
+  .slide-counter {
+    position: fixed;
+    left: 28px;
+    bottom: 28px;
+    z-index: 20;
+    color: rgba(255,255,255,0.74);
+    background: rgba(10,37,64,0.72);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  @media (max-width: 920px) {
+    .slide { padding: 38px 24px 72px; overflow-y: auto; }
+    .slide.active { display: block; }
+    .slide::after { width: 82vw; height: 42vh; right: -42vw; top: -12vh; }
+    .grid-2, .grid-3, .grid-4, .method, .effect-list { grid-template-columns: 1fr; }
+    .stripe-stack { position: relative; right: auto; top: auto; width: 100%; margin-top: 24px; transform: none; }
+    h1 { font-size: 52px; }
+    h2 { font-size: 38px; }
+  }
+
+  @media print {
+    body { height: auto; overflow: visible; background: white; }
+    .deck { height: auto; }
+    .slide {
+      position: relative;
+      display: grid !important;
+      min-height: 100vh;
+      opacity: 1 !important;
+      page-break-after: always;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    .nav, .slide-counter { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <section class="slide active" id="s0">
+    <div class="wordmark"><span class="mark-dot"></span><span>WFE</span></div>
+    <div class="slide-content">
+      <p class="kicker">Visual System / Meeting Notes Direction</p>
+      <h2>Alive color, held by a <span class="gradient-text">dark purple anchor</span>.</h2>
+      <div class="grid-2" style="margin-top: 24px;">
+        <div class="style-token">
+          <h3>Fonts</h3>
+          <p><strong>Headers:</strong> Kinfolk-inspired editorial serif stack for warmth, confidence, and a little human texture.</p>
+          <p><strong>Body:</strong> BetterOps / Stripe-inspired clean sans stack for crisp reading and professional clarity.</p>
+          <p><strong>Utility:</strong> SF Mono stack for labels, sources, and small technical annotations.</p>
+        </div>
+        <div class="style-token">
+          <h3>Color Palette</h3>
+          <p>Dark plum anchor with a larger human-service color range: expressive, bright, and still grounded.</p>
+          <div class="swatches">
+            <div class="swatch" style="background:#241033"></div>
+            <div class="swatch" style="background:#8a63ff"></div>
+            <div class="swatch" style="background:#ff6fb1"></div>
+            <div class="swatch" style="background:#ff9b6a"></div>
+            <div class="swatch" style="background:#ffc857"></div>
+            <div class="swatch" style="background:#b8e85f"></div>
+            <div class="swatch" style="background:#00c98b"></div>
+            <div class="swatch" style="background:#1bd7ff"></div>
+            <div class="swatch" style="background:#d7b7ff"></div>
+            <div class="swatch" style="background:#fff8fb"></div>
+          </div>
+        </div>
+      </div>
+      <div class="effect-list" style="margin-top: 16px;">
+        <div class="effect"><h3>Effects</h3><p>Bold gradient planes, glass panels, soft shadows, precise borders, and animated-feeling color without cartoons.</p></div>
+        <div class="effect"><h3>Composition</h3><p>Minimal white space where it helps, dark anchor moments where the color needs structure, and clean stat sections.</p></div>
+        <div class="effect"><h3>Brand Cue</h3><p>Simple WFE wordmark plus dot logo, so the mark can stand alone across decks, docs, and future web work.</p></div>
+      </div>
+      <div class="alive-ribbon" aria-hidden="true">
+        <span style="background:#241033"></span><span style="background:#8a63ff"></span><span style="background:#ff6fb1"></span><span style="background:#ff9b6a"></span><span style="background:#ffc857"></span><span style="background:#b8e85f"></span><span style="background:#00c98b"></span><span style="background:#1bd7ff"></span><span style="background:#d7b7ff"></span><span style="background:#fff2cf"></span>
+      </div>
+      <div class="band" style="margin-top: 18px;"><strong>Used throughout:</strong> bold color managed through repetition, a dark-purple professional anchor, warm editorial type, highly readable body copy, modular stats, and no cartoon illustration language.</div>
+    </div>
+    <div class="footer-note">Updated from meeting notes: alive, colorful, professional, anchored</div>
+  </section>
+
+  <section class="slide dark" id="s1">
+    <div class="wordmark"><span class="mark-dot"></span><span>WFE</span></div>
+    <div class="slide-content">
+      <p class="kicker">Workforce Empowerment</p>
+      <h1>The Missing Layer:<br><span class="gradient-text">Building Stronger from the Inside Out</span></h1>
+      <p class="lead">A partnership proposal for the Sisters Business Association, and a first test of a WFE brand system that feels alive, human, and still anchored.</p>
+      <p class="source" style="font-size: 13px;">2026</p>
+      <div class="stripe-stack">
+        <div class="stripe-card"><span>Human Layer</span><b>The service has a living side</b></div>
+        <div class="stripe-card"><span>Brand Anchor</span><b>Dark plum holds the color</b></div>
+        <div class="stripe-card"><span>Methodology</span><b>Inside Out</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s2">
+    <div class="slide-content">
+      <p class="kicker">We Heard You</p>
+      <h2>The reality <strong>you described</strong></h2>
+      <div class="grid-2" style="margin-top: 16px;">
+        <div class="panel" style="padding: 24px;">
+          <h3>Sisters, Oregon</h3>
+          <div class="grid-3" style="margin-top: 16px;">
+            <div class="stat alt"><div class="stat-number">$29M</div><div class="stat-label">Flat Fire peak-season impact</div></div>
+            <div class="stat amber"><div class="stat-number">~$8M</div><div class="stat-label">Hoodoo impact, roughly 350 jobs</div></div>
+            <div class="stat green"><div class="stat-number">30%</div><div class="stat-label">ODOT-related revenue decrease</div></div>
+          </div>
+          <div class="grid-3" style="margin-top: 14px;">
+            <div class="card"><h3>~3,073</h3><p>Population, 2020</p></div>
+            <div class="card"><h3>49.6</h3><p>Median age</p></div>
+            <div class="card"><h3>$1,780+</h3><p>One-bedroom rent per month</p></div>
+          </div>
+        </div>
+        <div style="display: grid; gap: 12px;">
+          <div class="quote"><p>"Staffing, staffing, staffing, staffing."</p><span>Childcare. Housing. Healthcare. All underneath.</span></div>
+          <div class="quote"><p>"There was no nest egg last year."</p><span>Flat fire shut summer down. No snow all winter. ODOT blocked downtown.</span></div>
+          <div class="quote"><p>"Less than 25 an hour... very expensive to live here."</p><span>Can't move wages up. Three of fifteen might last a year.</span></div>
+          <div class="quote"><p>"The bottom line is the culture, but it's also the community."</p></div>
+        </div>
+      </div>
+      <div class="band" style="margin-top: 18px;">Sisters is a local version of a national pattern: small businesses everywhere are operating with less slack. The stats stay clean; the color carries the life.</div>
+    </div>
+  </section>
+
+  <section class="slide" id="s3">
+    <div class="slide-content">
+      <p class="kicker">The Business Dimension</p>
+      <h2>Where most attention goes: the <strong>Business System</strong></h2>
+      <div class="grid-2" style="align-items: center; margin-top: 18px;">
+        <div>
+          <p class="lead">Most business owners focus almost entirely on one dimension: the Business System. That's natural. It's what feels urgent.</p>
+          <div class="pill-row" style="margin: 18px 0;">
+            <span class="pill blue">Pricing</span><span class="pill blue">Staffing</span><span class="pill blue">Scheduling</span><span class="pill blue">Workflows</span><span class="pill blue">SOPs</span><span class="pill blue">Marketing</span>
+            <span class="pill">Revenue</span><span class="pill">Inventory</span><span class="pill">Budgeting</span><span class="pill">Compliance</span><span class="pill">Hiring</span><span class="pill">Customer Service</span>
+          </div>
+          <div class="quote"><p>The instinct is to solve business problems with business solutions.</p><span>The SBA's perks calendar reflects this too: finance, marketing, HR, operations.</span></div>
+        </div>
+        <div class="diagram panel">
+          <div class="hemispheres">
+            <div class="hemi left active-blue"><h3>Business System</h3><p>Visible operations, processes, tools, and decisions.</p></div>
+            <div class="hemi right"><h3>Owner System</h3><p>Capacity, attention, regulation, confidence, and clarity.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s4">
+    <div class="slide-content">
+      <p class="kicker">The Owner Dimension</p>
+      <h2>The other half: the <strong>Owner System</strong></h2>
+      <div class="grid-2" style="align-items: center; margin-top: 18px;">
+        <div>
+          <p class="lead">When the Owner System is overloaded, the Business System becomes harder to improve.</p>
+          <div class="pill-row" style="margin: 18px 0;">
+            <span class="pill coral">Energy</span><span class="pill coral">Attention</span><span class="pill coral">Emotional Regulation</span><span class="pill coral">Judgment</span><span class="pill green">Confidence</span><span class="pill green">Communication</span>
+            <span class="pill">Self-Awareness</span><span class="pill">Resilience</span><span class="pill">Focus</span><span class="pill">Patience</span><span class="pill">Presence</span><span class="pill">Clarity</span>
+            <span class="pill blue">Boundaries</span><span class="pill blue">Decision-Making</span><span class="pill blue">Trust</span>
+          </div>
+          <div class="quote"><p>The business problems are real.</p><span>Underneath each one, there is a human dimension that is either making it harder or easier to solve. That's the gap.</span></div>
+        </div>
+        <div class="diagram panel">
+          <div class="hemispheres">
+            <div class="hemi left"><h3>Business System</h3><p>The urgent operating layer.</p></div>
+            <div class="hemi right active-coral"><h3>Owner System</h3><p>The human operating layer that carries the work.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s5">
+    <div class="slide-content">
+      <p class="kicker">The Evidence</p>
+      <h2>What happens when the Owner System is <strong>neglected</strong></h2>
+      <p class="lead">What owners aren't saying out loud.</p>
+      <div class="grid-3" style="margin-top: 22px;">
+        <div class="stat alt"><div class="stat-number">53%</div><div class="stat-label">emotionally drained or burned out</div><div class="source">Bluevine / Centiment, 2026</div></div>
+        <div class="stat"><div class="stat-number">68%</div><div class="stat-label">delayed or avoided a major business decision</div><div class="source">Bluevine / Centiment, 2026</div></div>
+        <div class="card"><h3>Stress changes the operating system</h3><p>Under stress, the brain shifts from planning and decision-making to habitual, emotional responses.</p><p class="source">Arnsten, Nature Reviews Neuroscience, 2009</p></div>
+      </div>
+      <div class="quote" style="margin-top: 28px;"><p>When the individual at the center is strained, the strain reaches every system they lead.</p><span>This is the dimension no one is investing in.</span></div>
+    </div>
+  </section>
+
+  <section class="slide dark" id="s6">
+    <div class="slide-content">
+      <p class="kicker">The Evidence</p>
+      <h2>The <span class="gradient-text">staffing connection</span></h2>
+      <p class="lead">How the owner shows up determines how the team shows up. The same human layer that shapes the owner's capacity also shapes whether people stay.</p>
+      <div class="grid-2" style="margin-top: 22px;">
+        <div class="card"><h3>The Manager Gap</h3><p>Manager engagement dropped from <strong>27% to 22%</strong> in a single year. Best-practice organizations: <strong>79%</strong> manager engagement.</p><p class="source">Gallup, State of the Global Workplace, 2026</p></div>
+        <div class="card"><h3>Best Small Workplaces</h3><p><strong>9 in 10</strong> employees at winning small workplaces want to stay long-term. <strong>98%</strong> give extra effort.</p><p class="source">Great Place To Work / Fortune Best Small Workplaces, 2025</p></div>
+      </div>
+      <div class="band" style="margin-top: 22px;">Leaders account for 70% of the variance in employee engagement. What retains people is recognition, meaning, autonomy, and growth.</div>
+      <div class="pill-row" style="margin-top: 16px;"><span class="pill">Trustworthy leadership</span><span class="pill">Fairness & equity</span><span class="pill">Respect & care</span><span class="pill">Belonging & camaraderie</span><span class="pill">Pride, meaning, growth</span></div>
+    </div>
+  </section>
+
+  <section class="slide" id="s7">
+    <div class="slide-content">
+      <p class="kicker">Who We Are</p>
+      <h2>What we <strong>do</strong> and what we <strong>believe</strong></h2>
+      <div class="grid-2" style="margin-top: 20px;">
+        <div class="panel" style="padding: 26px;">
+          <p class="lead">We build the human operating capacity that durable performance depends on, equipping individuals, teams, and organizations to grow through the forces that shape every workplace.</p>
+          <p class="lead"><strong>We design it in rather than leave it to chance.</strong></p>
+        </div>
+        <div class="card">
+          <h3>Core beliefs</h3>
+          <ul style="padding-left: 18px; margin-bottom: 0;">
+            <li>Human growth belongs at work.</li>
+            <li>Change starts inside the individual.</li>
+            <li>The human operating layer is the foundation.</li>
+            <li>Regulation before reframing. Reframing before action.</li>
+            <li>Human operating capacity can be moved, deliberately.</li>
+            <li>Disruption is the opportunity, not the threat.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s8">
+    <div class="slide-content">
+      <p class="kicker">Who We Are</p>
+      <h2>How we <strong>work</strong></h2>
+      <p class="lead">The sequencing discipline that makes the methodology hold under real conditions.</p>
+      <div class="method">
+        <div class="card"><h3>Regulation</h3><p>Body, nervous system, emotions, energy. We regulate and ground first.</p></div>
+        <div class="card"><h3>Reframing</h3><p>Personal narrative and outlook. From a regulated state, patterns become visible.</p></div>
+        <div class="card"><h3>Action</h3><p>Intentional action and execution. Only from clarity can action sustain itself.</p></div>
+      </div>
+      <div class="grid-2" style="margin-top: 22px;">
+        <div class="quote"><p>Individual Regulation before Team Application before Organizational Effectiveness.</p><span>This is performance optimization, not wellness and not therapy.</span></div>
+        <div class="band">When people feel regulated, resilient, and aligned on how to show up for each other, performance follows.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s9">
+    <div class="slide-content">
+      <p class="kicker">What This Means for the SBA</p>
+      <h2>See what's real. Act on <strong>what matters.</strong></h2>
+      <div class="grid-3" style="margin-top: 20px;">
+        <div class="card"><h3>See what's real</h3><p>We help owners distinguish between what's actually happening and the story they're telling themselves.</p></div>
+        <div class="card"><h3>Surface what matters</h3><p>The friction map sorts business pain points into what you can Control, Influence, Monitor, or Release.</p></div>
+        <div class="card"><h3>See the patterns underneath</h3><p>Confidential intake and pressure archetypes help owners recognize their default under stress.</p></div>
+      </div>
+      <p class="source">Best Places to Work differentiator: respect and care for the whole person + pride, meaning, and growth</p>
+    </div>
+  </section>
+
+  <section class="slide" id="s10">
+    <div class="slide-content">
+      <p class="kicker">What This Means for the SBA</p>
+      <h2>Deepen what's <strong>already working</strong></h2>
+      <div class="grid-2" style="margin-top: 20px;">
+        <div class="card"><h3>Beyond networking</h3><p>The mix-and-mingles and perks already bring people together. We take that further with structured peer work: friction mapping together, cross-business advisory circles, and shared Owner dimension exercises.</p></div>
+        <div style="display: grid; gap: 12px;">
+          <div class="quote"><p>Owner isolation is real</p><span>In a town of 3,000, there's no built-in peer group for the weight owners carry.</span></div>
+          <div class="quote"><p>Reputation is the labor market</p><span>When an owner leads better, word travels. In Sisters, that's the most powerful recruiting tool available.</span></div>
+          <div class="quote"><p>Belonging keeps people</p><span>Seasonal workers have options. The differentiator isn't pay. It's whether they feel part of something.</span></div>
+        </div>
+      </div>
+      <p class="source">Best Places to Work differentiator: belonging and camaraderie + fairness and equity</p>
+    </div>
+  </section>
+
+  <section class="slide" id="s11">
+    <div class="slide-content">
+      <p class="kicker">What This Means for the SBA</p>
+      <h2>Strengthen what <strong>you've built</strong></h2>
+      <div class="grid-4" style="margin-top: 20px;">
+        <div class="card"><h3>Sharpen the signal</h3><p>Aggregated, anonymous themes become data-backed signals for what programming the SBA delivers next.</p></div>
+        <div class="card"><h3>Outsource human layer development</h3><p>We add a specialized Owner System dimension to SBA member development.</p></div>
+        <div class="card"><h3>Advance the founding mission</h3><p>Not a new direction. A deeper investment in the one you already chose.</p></div>
+        <div class="card"><h3>Deepen the collective voice</h3><p>We help members advocate with more cohesion through city council, the Chamber, and community planning.</p></div>
+      </div>
+      <div class="band" style="margin-top: 22px;">The Federal Reserve noted the value of peer learning, convenings, and partnerships as support organizations face rising demand and capacity constraints.</div>
+      <p class="source">Federal Reserve Survey of Business Resource Organizations, 2025</p>
+    </div>
+  </section>
+
+  <section class="slide dark" id="s12">
+    <div class="slide-content">
+      <p class="kicker">What's Next</p>
+      <h1>Restore agency.<br><span class="gradient-text">Build capacity.</span></h1>
+      <div class="grid-2" style="align-items: center; margin-top: 18px;">
+        <div>
+          <p class="lead">We exist to restore agency and build capacity in the people carrying the work, from the inside out.</p>
+          <p class="lead">For the SBA, that means the people carrying Sisters.</p>
+        </div>
+        <div style="display: grid; gap: 12px;">
+          <div class="stripe-card"><span>Option 01</span><b>A presentation to your members</b></div>
+          <div class="stripe-card"><span>Option 02</span><b>A pilot with willing owners</b></div>
+          <div class="stripe-card"><span>Option 03</span><b>SBA's Owner System partner</b></div>
+          <div class="stripe-card"><span>Ready</span><b>Detailed proposal ready to share</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="slide-counter"><span id="current">1</span> / <span id="total">13</span></div>
+<div class="nav">
+  <button onclick="navigate(-1)" aria-label="Previous slide">&#8592;</button>
+  <button onclick="navigate(1)" aria-label="Next slide">&#8594;</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  let current = 0;
+  const currentEl = document.getElementById("current");
+  const totalEl = document.getElementById("total");
+  totalEl.textContent = slides.length;
+
+  function showSlide(index) {
+    slides[current].classList.remove("active");
+    current = Math.max(0, Math.min(index, slides.length - 1));
+    slides[current].classList.add("active");
+    currentEl.textContent = current + 1;
+  }
+
+  function navigate(direction) { showSlide(current + direction); }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowRight" || event.key === " ") {
+      event.preventDefault();
+      navigate(1);
+    }
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      navigate(-1);
+    }
+    if (event.key === "Home") {
+      event.preventDefault();
+      showSlide(0);
+    }
+    if (event.key === "End") {
+      event.preventDefault();
+      showSlide(slides.length - 1);
+    }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener("touchstart", (event) => { touchStartX = event.changedTouches[0].screenX; });
+  document.addEventListener("touchend", (event) => {
+    const diff = touchStartX - event.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) navigate(diff > 0 ? 1 : -1);
+  });
+</script>
+</body>
+</html>
