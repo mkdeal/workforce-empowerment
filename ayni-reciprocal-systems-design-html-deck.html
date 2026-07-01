@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ayni Reciprocal Systems Design Mockup</title>
+<style>
+  :root {
+    --ink: #151413;
+    --charcoal: #242321;
+    --plum: #2d1d31;
+    --cream: #fbf3e7;
+    --sand: #eadcc8;
+    --clay: #b96548;
+    --ochre: #d8a13b;
+    --teal: #1f6f68;
+    --green: #6f9b72;
+    --rose: #d98978;
+    --muted: #6f675e;
+    --line: rgba(251, 243, 231, .16);
+    --soft-line: rgba(21, 20, 19, .09);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: #0d0c0b;
+    color: var(--ink);
+    font-family: Avenir, Inter, Aptos, "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden;
+  }
+
+  .deck { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    padding: clamp(36px, 5vw, 72px);
+    overflow: hidden;
+  }
+  .slide.active { display: block; }
+
+  .light {
+    background:
+      linear-gradient(var(--soft-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--soft-line) 1px, transparent 1px),
+      var(--cream);
+    background-size: 80px 80px, 80px 80px, auto;
+  }
+
+  .dark {
+    color: var(--cream);
+    background:
+      radial-gradient(circle at 18% 18%, rgba(185,101,72,.28), transparent 28%),
+      radial-gradient(circle at 84% 72%, rgba(31,111,104,.24), transparent 30%),
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px),
+      var(--ink);
+    background-size: auto, auto, 72px 72px, 72px 72px, auto;
+  }
+
+  .plum {
+    color: var(--cream);
+    background:
+      linear-gradient(102deg, rgba(251,243,231,.08) 1px, transparent 1px),
+      radial-gradient(circle at 76% 36%, rgba(216,161,59,.18), transparent 28%),
+      var(--plum);
+    background-size: 84px 100%, auto, auto;
+  }
+
+  h1, h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    letter-spacing: 0;
+    line-height: .98;
+  }
+  h1 { font-size: clamp(68px, 8.4vw, 118px); max-width: 840px; }
+  h2 { font-size: clamp(42px, 5vw, 70px); max-width: 970px; }
+
+  p { margin: 0; font-size: clamp(19px, 2vw, 27px); line-height: 1.27; }
+  .eyebrow {
+    margin: 0 0 42px;
+    color: var(--clay);
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0;
+  }
+  .dark .eyebrow { color: var(--ochre); }
+  .plum .eyebrow { color: var(--ochre); }
+  .lead { margin-top: 34px; max-width: 690px; color: rgba(251,243,231,.82); }
+  .light .lead { color: #433d36; }
+  .small { font-size: 17px; line-height: 1.36; }
+  .muted { color: rgba(251,243,231,.68); }
+  .light .muted { color: var(--muted); }
+
+  .footer {
+    position: absolute;
+    left: clamp(36px, 5vw, 72px);
+    right: clamp(36px, 5vw, 72px);
+    bottom: 36px;
+    display: flex;
+    justify-content: space-between;
+    color: rgba(251,243,231,.42);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .light .footer { color: rgba(21,20,19,.42); }
+
+  .statement {
+    max-width: 1040px;
+    margin-top: 34px;
+    font-size: clamp(24px, 2.8vw, 37px);
+    line-height: 1.18;
+  }
+  .statement strong { color: var(--teal); }
+
+  .reciprocity-field {
+    position: absolute;
+    right: 9vw;
+    top: 18vh;
+    width: 390px;
+    height: 390px;
+    border: 1px solid rgba(251,243,231,.25);
+    border-radius: 50%;
+  }
+  .reciprocity-field::before,
+  .reciprocity-field::after {
+    content: "";
+    position: absolute;
+    border: 1px solid rgba(251,243,231,.18);
+    border-radius: 50%;
+  }
+  .reciprocity-field::before { inset: 54px; }
+  .reciprocity-field::after { inset: 116px; }
+
+  .exchange {
+    position: absolute;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1.08;
+    color: var(--cream);
+    background: var(--teal);
+  }
+  .exchange.center {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--clay);
+    border: 1px solid var(--cream);
+  }
+  .exchange.one { left: 18px; top: 54px; background: var(--clay); }
+  .exchange.two { right: 10px; top: 86px; background: var(--teal); }
+  .exchange.three { right: 56px; bottom: 14px; background: var(--green); }
+  .exchange.four { left: 40px; bottom: 30px; background: var(--ochre); color: var(--ink); }
+
+  .arc {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    border: 2px solid transparent;
+    border-top-color: var(--ochre);
+    border-right-color: var(--ochre);
+    border-radius: 50%;
+    opacity: .78;
+  }
+  .arc.a { left: 36px; top: 42px; transform: rotate(28deg); }
+  .arc.b { right: 40px; bottom: 42px; transform: rotate(205deg); border-top-color: var(--teal); border-right-color: var(--teal); }
+
+  .design-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 26px;
+    max-width: 1100px;
+    margin-top: 34px;
+  }
+  .design-block {
+    padding: 24px 26px;
+    border: 1px solid rgba(21,20,19,.14);
+    border-radius: 12px;
+    background: rgba(255,255,255,.26);
+  }
+  .design-block h3 {
+    margin: 0 0 14px;
+    font-size: 17px;
+    text-transform: uppercase;
+  }
+  .design-block p, .design-block li { font-size: 17px; line-height: 1.32; }
+  .design-block ul { margin: 0; padding-left: 20px; }
+  .swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .swatch {
+    min-height: 78px;
+    border-radius: 10px;
+    border: 1px solid rgba(21,20,19,.16);
+    padding: 10px;
+    display: flex;
+    align-items: flex-end;
+    color: var(--cream);
+    font-size: 10px;
+    font-weight: 900;
+  }
+  .swatch.light-text { color: var(--ink); }
+  .type-serif { font-family: Georgia, "Times New Roman", serif; font-size: 34px; line-height: 1; }
+  .type-sans { font-size: 24px; font-weight: 800; margin-top: 14px; }
+  .type-mono { font-family: "SF Mono", Consolas, monospace; font-size: 14px; color: var(--muted); margin-top: 14px; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: minmax(0, .95fr) minmax(340px, .66fr);
+    gap: 56px;
+    align-items: start;
+    height: calc(100% - 92px);
+  }
+  .panel {
+    min-height: 420px;
+    padding: 46px 50px;
+    border-radius: 16px;
+    background: #201f1d;
+    color: var(--cream);
+    border: 1px solid rgba(251,243,231,.16);
+  }
+  .panel.light-panel {
+    color: var(--ink);
+    background: #efe1cf;
+    border-color: rgba(21,20,19,.14);
+  }
+  .label {
+    margin-bottom: 34px;
+    color: var(--clay);
+    font-size: 13px;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+  .panel ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: clamp(25px, 3vw, 38px);
+    line-height: 1.22;
+  }
+  .bridge {
+    position: absolute;
+    left: 45%;
+    top: 54%;
+    color: var(--teal);
+    font-size: 14px;
+    font-weight: 900;
+    text-align: center;
+  }
+  .bridge::before {
+    content: "";
+    display: block;
+    width: 110px;
+    height: 3px;
+    margin: 0 auto 18px;
+    background: linear-gradient(90deg, var(--clay), var(--teal));
+  }
+
+  .sequence {
+    position: absolute;
+    left: 7vw;
+    right: 7vw;
+    top: 49%;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    align-items: start;
+  }
+  .step {
+    position: relative;
+    text-align: center;
+    color: var(--cream);
+    font-size: 19px;
+    font-weight: 900;
+  }
+  .step::before {
+    content: "";
+    display: block;
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 26px;
+    border-radius: 50%;
+    background: var(--clay);
+  }
+  .step:not(:first-child)::after {
+    content: "";
+    position: absolute;
+    top: 31px;
+    left: -50%;
+    width: calc(100% - 62px);
+    height: 2px;
+    background: rgba(251,243,231,.52);
+  }
+  .step:nth-child(2)::before { background: var(--ochre); }
+  .step:nth-child(3)::before { background: var(--teal); }
+  .step:nth-child(4)::before { background: var(--green); }
+  .step:nth-child(5)::before { background: var(--cream); }
+  .mantra {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 120px;
+    text-align: center;
+    color: var(--cream);
+    font-size: clamp(30px, 3.2vw, 48px);
+    font-weight: 900;
+  }
+
+  .diagnostic {
+    position: absolute;
+    left: 7vw;
+    right: 7vw;
+    top: 33%;
+    height: 46%;
+    padding: 44px 54px 28px;
+    border-radius: 14px;
+    background: #201f1d;
+    border: 1px solid rgba(21,20,19,.2);
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 42px;
+    align-items: end;
+  }
+  .bar-wrap { height: 100%; display: grid; grid-template-rows: 28px 1fr 34px; align-items: end; text-align: center; }
+  .bar-label { align-self: start; color: #b7afa4; font-size: 10px; font-weight: 900; text-transform: uppercase; }
+  .bar { width: 54px; margin: 0 auto; border-radius: 3px; background: var(--clay); }
+  .bar-value { color: var(--cream); font-size: 20px; font-weight: 900; }
+
+  .nav {
+    position: fixed;
+    right: 22px;
+    bottom: 18px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+  }
+  .nav button {
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 50%;
+    background: rgba(8,9,11,.78);
+    color: var(--cream);
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 860px) {
+    body { overflow: auto; }
+    .slide { overflow-y: auto; min-height: 100vh; }
+    .design-grid, .two-col { grid-template-columns: 1fr; }
+    .reciprocity-field { opacity: .32; transform: scale(.78); transform-origin: top right; }
+    .sequence, .diagnostic { position: relative; left: auto; right: auto; top: auto; margin-top: 48px; grid-template-columns: repeat(2, 1fr); }
+    .mantra { position: relative; bottom: auto; margin-top: 40px; }
+  }
+</style>
+</head>
+<body>
+<main class="deck" aria-live="polite">
+
+  <section class="slide light active">
+    <p class="eyebrow">Style Statement / V2</p>
+    <h2>Reciprocal Systems Design</h2>
+    <p class="statement">Ayni's visual style is <strong>reciprocal systems design</strong>: structured, warm, and quietly powerful. It takes the language of organizational health - trust, capacity, leadership, communication, and resilience - and frames it through reciprocity rather than extraction.</p>
+    <p class="statement" style="font-size: clamp(21px, 2.2vw, 30px); max-width: 1040px;">The aesthetic should feel grounded in mutual care, but still rigorous enough for leaders navigating complexity. Ayni is not about fixing people inside broken systems; it is about rebuilding the conditions where people and organizations can thrive together.</p>
+    <div class="footer"><span>Ayni / Reciprocal Systems Design</span><span>01</span></div>
+  </section>
+
+  <section class="slide light">
+    <p class="eyebrow">Design System</p>
+    <h2>Palette, type, and visual elements</h2>
+    <div class="design-grid">
+      <div class="design-block">
+        <h3>Color Palette</h3>
+        <div class="swatches">
+          <div class="swatch" style="background:#151413">Ink</div>
+          <div class="swatch" style="background:#2d1d31">Plum</div>
+          <div class="swatch light-text" style="background:#fbf3e7">Cream</div>
+          <div class="swatch" style="background:#b96548">Clay</div>
+          <div class="swatch" style="background:#d8a13b">Ochre</div>
+          <div class="swatch" style="background:#1f6f68">Teal</div>
+        </div>
+      </div>
+      <div class="design-block">
+        <h3>Typography</h3>
+        <div class="type-serif">Editorial serif for values and thesis</div>
+        <div class="type-sans">Modern sans for organizational clarity</div>
+        <div class="type-mono">SF Mono style for labels, diagnostics, and source cues</div>
+      </div>
+      <div class="design-block">
+        <h3>Elements</h3>
+        <ul>
+          <li>Circular exchange motifs instead of broadcast signal maps</li>
+          <li>Warm earth tones paired with deep strategic neutrals</li>
+          <li>Balanced pairs, loops, and shared centers</li>
+          <li>Diagnostic modules reframed as listening tools</li>
+        </ul>
+      </div>
+      <div class="design-block">
+        <h3>Respectful Use</h3>
+        <ul>
+          <li>Reference the principle through behavior, not surface ornament</li>
+          <li>Avoid decorative Andean patterning unless used with real care</li>
+          <li>Let reciprocity show up in structure, language, and delivery</li>
+          <li>Keep the brand grounded, relational, and buyer-credible</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>Ayni / Reciprocal Systems Design</span><span>02</span></div>
+  </section>
+
+  <section class="slide dark">
+    <p class="eyebrow">Ayni</p>
+    <h1>Reciprocity<br>Made Visible</h1>
+    <p class="lead">Ayni builds the reciprocal trust that lets people and organizations thrive together. The deck should feel like mutual care with a spine: warm, structured, grounded, and alive.</p>
+    <div class="reciprocity-field" aria-hidden="true">
+      <div class="arc a"></div>
+      <div class="arc b"></div>
+      <div class="exchange center">AYNI</div>
+      <div class="exchange one">People</div>
+      <div class="exchange two">Teams</div>
+      <div class="exchange three">Systems</div>
+      <div class="exchange four">Trust</div>
+    </div>
+    <div class="footer"><span>Ayni / Reciprocal Systems Design</span><span>03</span></div>
+  </section>
+
+  <section class="slide light">
+    <p class="eyebrow">Style Thesis</p>
+    <div class="two-col">
+      <div>
+        <h2>Structure with mutual care.</h2>
+        <p class="lead">The visual system should feel like organizational consulting reframed around relationship: rigorous enough to hold complexity, warm enough to restore trust, and humble enough to honor the principle behind the name.</p>
+      </div>
+      <div class="panel">
+        <div class="label" style="color:#b7afa4;">Reciprocal Field</div>
+        <svg viewBox="0 0 360 260" width="100%" height="260" aria-hidden="true">
+          <circle cx="180" cy="130" r="104" fill="none" stroke="#fbf3e7" opacity=".28" stroke-width="2"/>
+          <circle cx="180" cy="130" r="52" fill="#b96548"/>
+          <path d="M83 100 C120 26, 242 23, 285 104" fill="none" stroke="#d8a13b" stroke-width="4" opacity=".9"/>
+          <path d="M278 160 C239 235, 118 233, 76 154" fill="none" stroke="#1f6f68" stroke-width="4" opacity=".9"/>
+          <circle cx="80" cy="130" r="18" fill="#d8a13b"/>
+          <circle cx="280" cy="130" r="18" fill="#1f6f68"/>
+          <circle cx="180" cy="45" r="14" fill="#6f9b72"/>
+          <circle cx="180" cy="215" r="14" fill="#d98978"/>
+        </svg>
+        <p class="small muted">The motif shifts from signal transmission to reciprocal exchange: each point gives to and receives from the whole.</p>
+      </div>
+    </div>
+    <div class="footer"><span>Ayni / Reciprocal Systems Design</span><span>04</span></div>
+  </section>
+
+  <section class="slide light">
+    <p class="eyebrow" style="color:var(--teal);">Positioning Contrast</p>
+    <h2 style="font-family:Avenir, Inter, Aptos, sans-serif;line-height:1.12;">Traditional consulting improves systems.<br>Ayni rebuilds the trust between them.</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:148px;margin-top:82px;">
+      <div class="panel light-panel">
+        <div class="label" style="color:#746a60;">Extractive Pattern</div>
+        <ul><li>Pressure</li><li>Compliance</li><li>Output</li><li>Fatigue</li></ul>
+      </div>
+      <div class="panel">
+        <div class="label">Reciprocal Pattern</div>
+        <ul><li>Listening</li><li>Trust</li><li>Capacity</li><li>Renewal</li></ul>
+      </div>
+    </div>
+    <div class="bridge">Ayni lives here</div>
+    <div class="footer"><span>Ayni / Reciprocal Systems Design</span><span>05</span></div>
+  </section>
+
+  <section class="slide dark">
+    <p class="eyebrow">Methodology</p>
+    <h2>Trust comes before transformation.</h2>
+    <div class="sequence">
+      <div class="step">Listen</div>
+      <div class="step">Regulate</div>
+      <div class="step">Relate</div>
+      <div class="step">Align</div>
+      <div class="step">Thrive</div>
+    </div>
+    <div class="mantra">Give -> Receive -> Grow</div>
+    <div class="footer"><span>Ayni / Reciprocal Systems Design</span><span>06</span></div>
+  </section>
+
+  <section class="slide light">
+    <p class="eyebrow" style="color:var(--plum);">Listening Diagnostics</p>
+    <h2 style="font-family:Avenir, Inter, Aptos, sans-serif;line-height:1.1;">Listen before you intervene.</h2>
+    <div class="diagnostic">
+      <div class="bar-wrap"><div class="bar-label">Trust</div><div class="bar" style="height:48%;background:var(--teal);"></div><div class="bar-value">48%</div></div>
+      <div class="bar-wrap"><div class="bar-label">Clarity</div><div class="bar" style="height:72%;background:var(--ochre);"></div><div class="bar-value">72%</div></div>
+      <div class="bar-wrap"><div class="bar-label">Burnout</div><div class="bar" style="height:83%;background:var(--clay);"></div><div class="bar-value">83%</div></div>
+      <div class="bar-wrap"><div class="bar-label">Belonging</div><div class="bar" style="height:39%;background:var(--green);"></div><div class="bar-value">39%</div></div>
+      <div class="bar-wrap"><div class="bar-label">Agency</div><div class="bar" style="height:54%;background:var(--rose);"></div><div class="bar-value">54%</div></div>
+      <div class="bar-wrap"><div class="bar-label">Capacity</div><div class="bar" style="height:76%;background:var(--cream);"></div><div class="bar-value">76%</div></div>
+    </div>
+    <p class="small muted" style="position:absolute;left:11vw;bottom:88px;max-width:780px;">Diagnostics become an act of reciprocity: people offer truth, and the organization responds with care, structure, and action.</p>
+    <div class="footer"><span>Ayni / Reciprocal Systems Design</span><span>07</span></div>
+  </section>
+
+  <section class="slide plum">
+    <p class="eyebrow">The Result</p>
+    <h2>A deck that feels grounded in shared care.</h2>
+    <p class="lead" style="max-width: 720px;">Serious enough for leaders. Warm enough for people. Structured enough to hold complexity. Humble enough to honor the cultural weight of the name.</p>
+    <div class="reciprocity-field" style="right:15vw;top:22vh;" aria-hidden="true">
+      <div class="arc a"></div>
+      <div class="arc b"></div>
+      <div class="exchange center">AYNI</div>
+      <div class="exchange one">Give</div>
+      <div class="exchange two">Receive</div>
+      <div class="exchange three">Grow</div>
+      <div class="exchange four">Care</div>
+    </div>
+    <div class="footer"><span>Ayni / Reciprocal Systems Design</span><span>08</span></div>
+  </section>
+
+</main>
+
+<div class="nav" aria-label="Slide controls">
+  <button type="button" id="prev" aria-label="Previous slide">&lsaquo;</button>
+  <button type="button" id="next" aria-label="Next slide">&rsaquo;</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  let current = 0;
+  function show(index) {
+    current = (index + slides.length) % slides.length;
+    slides.forEach((slide, i) => slide.classList.toggle("active", i === current));
+  }
+  document.getElementById("prev").addEventListener("click", () => show(current - 1));
+  document.getElementById("next").addEventListener("click", () => show(current + 1));
+  window.addEventListener("keydown", (event) => {
+    if (["ArrowRight", " ", "PageDown"].includes(event.key)) show(current + 1);
+    if (["ArrowLeft", "PageUp"].includes(event.key)) show(current - 1);
+  });
+</script>
+</body>
+</html>
