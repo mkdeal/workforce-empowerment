@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WFE Human Systems Modernism Mockup</title>
+<style>
+  :root {
+    --ink: #111317;
+    --plum: #24162f;
+    --graphite: #23272c;
+    --paper: #f6f2eb;
+    --bone: #fffaf1;
+    --mist: #d7ddd8;
+    --muted: #aab0aa;
+    --coral: #ff725c;
+    --blue: #28a7ff;
+    --amber: #f4b85b;
+    --green: #5ed69a;
+    --violet: #8e6aff;
+    --line: rgba(255, 250, 241, .12);
+    --soft-line: rgba(17, 19, 23, .08);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: #08090b;
+    color: var(--ink);
+    font-family: Avenir, Inter, Aptos, "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden;
+  }
+
+  .deck {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    padding: clamp(36px, 5vw, 72px);
+    overflow: hidden;
+  }
+
+  .slide.active { display: block; }
+
+  .dark {
+    color: var(--bone);
+    background:
+      linear-gradient(90deg, rgba(36, 22, 47, .96) 0 35%, transparent 35%),
+      linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px),
+      var(--ink);
+    background-size: auto, 64px 64px, 64px 64px, auto;
+  }
+
+  .light {
+    background:
+      linear-gradient(rgba(17,19,23,.075) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(17,19,23,.075) 1px, transparent 1px),
+      var(--paper);
+    background-size: 80px 80px, 80px 80px, auto;
+  }
+
+  .plum {
+    color: var(--bone);
+    background:
+      linear-gradient(100deg, rgba(255,255,255,.075) 1px, transparent 1px),
+      var(--plum);
+    background-size: 80px 100%;
+  }
+
+  .eyebrow {
+    margin: 0 0 42px;
+    color: var(--coral);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .dark .eyebrow { color: var(--green); }
+  .plum .eyebrow { color: var(--amber); }
+
+  h1, h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    letter-spacing: 0;
+    line-height: .98;
+  }
+
+  h1 { font-size: clamp(56px, 7.2vw, 96px); max-width: 760px; }
+  h2 { font-size: clamp(42px, 5vw, 68px); max-width: 930px; }
+
+  p {
+    margin: 0;
+    font-size: clamp(19px, 2vw, 27px);
+    line-height: 1.26;
+  }
+
+  .lead {
+    margin-top: 34px;
+    max-width: 660px;
+    color: rgba(255, 250, 241, .82);
+  }
+
+  .light .lead { color: #3a3834; }
+  .small { font-size: 17px; line-height: 1.36; }
+  .muted { color: rgba(255, 250, 241, .68); }
+  .light .muted { color: #5b5750; }
+
+  .footer {
+    position: absolute;
+    left: clamp(36px, 5vw, 72px);
+    right: clamp(36px, 5vw, 72px);
+    bottom: 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgba(255, 250, 241, .42);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .light .footer { color: rgba(17, 19, 23, .42); }
+
+  .signal-lines {
+    position: absolute;
+    right: 7vw;
+    top: 18vh;
+    width: 41vw;
+    height: 48vh;
+    opacity: .9;
+  }
+
+  .signal-lines span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--coral);
+    transform-origin: left center;
+  }
+
+  .signal-lines span:nth-child(2n) { background: var(--blue); }
+  .signal-lines span:nth-child(1) { top: 8%; transform: rotate(0deg); }
+  .signal-lines span:nth-child(2) { top: 20%; transform: rotate(4deg); }
+  .signal-lines span:nth-child(3) { top: 33%; transform: rotate(-5deg); }
+  .signal-lines span:nth-child(4) { top: 46%; transform: rotate(0deg); }
+  .signal-lines span:nth-child(5) { top: 61%; transform: rotate(-4deg); }
+  .signal-lines span:nth-child(6) { top: 76%; transform: rotate(7deg); }
+
+  .signal-map {
+    position: absolute;
+    right: 9vw;
+    top: 21vh;
+    width: 360px;
+    height: 360px;
+    border: 1px solid rgba(255,250,241,.24);
+    border-radius: 16px;
+  }
+
+  .node {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+
+  .node::after {
+    content: attr(data-label);
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,250,241,.74);
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .core {
+    left: 50%;
+    top: 50%;
+    width: 96px;
+    height: 96px;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--bone);
+    background: var(--plum);
+    color: var(--bone);
+    font-weight: 800;
+    line-height: 1.05;
+    text-align: center;
+  }
+
+  .core::after { display: none; }
+
+  .connector {
+    position: absolute;
+    height: 2px;
+    background: var(--blue);
+    transform-origin: left center;
+  }
+
+  .statement {
+    max-width: 1010px;
+    margin-top: 34px;
+    font-size: clamp(24px, 2.8vw, 37px);
+    line-height: 1.18;
+  }
+
+  .statement strong { color: var(--coral); }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: minmax(0, .95fr) minmax(340px, .65fr);
+    gap: 56px;
+    align-items: start;
+    height: calc(100% - 92px);
+  }
+
+  .system-card {
+    min-height: 420px;
+    padding: 46px 50px;
+    border-radius: 16px;
+    background: #181b20;
+    color: var(--bone);
+    border: 1px solid #303641;
+  }
+
+  .system-card.light-card {
+    color: var(--ink);
+    background: #f1ece3;
+    border-color: #d6cec0;
+  }
+
+  .label {
+    margin-bottom: 36px;
+    color: var(--coral);
+    font-size: 13px;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .light-card .label { color: #777064; }
+
+  .system-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: clamp(25px, 3vw, 38px);
+    line-height: 1.22;
+  }
+
+  .bridge {
+    position: absolute;
+    left: 45.7%;
+    top: 55%;
+    color: var(--coral);
+    font-size: 14px;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .bridge::before {
+    content: "";
+    display: block;
+    width: 104px;
+    height: 3px;
+    margin: 0 auto 18px;
+    background: var(--coral);
+  }
+
+  .method {
+    position: absolute;
+    left: 7vw;
+    right: 7vw;
+    top: 50%;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    align-items: start;
+  }
+
+  .step {
+    position: relative;
+    text-align: center;
+    color: var(--bone);
+    font-size: 19px;
+    font-weight: 800;
+  }
+
+  .step::before {
+    content: "";
+    display: block;
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 26px;
+    border-radius: 50%;
+    background: var(--coral);
+  }
+
+  .step:not(:first-child)::after {
+    content: "";
+    position: absolute;
+    top: 29px;
+    left: -50%;
+    width: calc(100% - 58px);
+    height: 2px;
+    background: rgba(255,250,241,.55);
+  }
+
+  .step:nth-child(2)::before { background: var(--amber); }
+  .step:nth-child(3)::before { background: var(--green); }
+  .step:nth-child(4)::before { background: var(--blue); }
+  .step:nth-child(5)::before { background: var(--violet); }
+  .step:nth-child(6)::before { background: var(--bone); }
+
+  .mantra {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 120px;
+    text-align: center;
+    color: var(--bone);
+    font-size: clamp(30px, 3.2vw, 48px);
+    font-weight: 800;
+  }
+
+  .diagnostic {
+    position: absolute;
+    left: 7vw;
+    right: 7vw;
+    top: 33%;
+    height: 46%;
+    padding: 44px 54px 28px;
+    border-radius: 14px;
+    background: #16191e;
+    border: 1px solid #303641;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 42px;
+    align-items: end;
+  }
+
+  .bar-wrap {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 28px 1fr 34px;
+    align-items: end;
+    text-align: center;
+  }
+
+  .bar-label {
+    align-self: start;
+    color: #9ca3aa;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .bar {
+    width: 54px;
+    margin: 0 auto;
+    border-radius: 3px;
+    background: var(--blue);
+  }
+
+  .bar-value {
+    color: var(--bone);
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  .design-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 26px;
+    max-width: 1100px;
+  }
+
+  .design-block {
+    padding: 24px 26px;
+    border: 1px solid rgba(17,19,23,.13);
+    border-radius: 12px;
+    background: rgba(255,255,255,.28);
+  }
+
+  .design-block h3 {
+    margin: 0 0 14px;
+    font-size: 17px;
+    text-transform: uppercase;
+  }
+
+  .design-block p, .design-block li {
+    font-size: 17px;
+    line-height: 1.32;
+  }
+
+  .design-block ul { margin: 0; padding-left: 20px; }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+
+  .swatch {
+    min-height: 78px;
+    border-radius: 10px;
+    border: 1px solid rgba(17,19,23,.16);
+    padding: 10px;
+    color: var(--bone);
+    display: flex;
+    align-items: flex-end;
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .swatch.light-text { color: var(--ink); }
+
+  .type-sample {
+    display: grid;
+    gap: 14px;
+  }
+
+  .type-serif {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 34px;
+    line-height: 1;
+  }
+
+  .type-sans {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .type-mono {
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 14px;
+    color: #5b5750;
+  }
+
+  .nav {
+    position: fixed;
+    right: 22px;
+    bottom: 18px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+  }
+
+  .nav button {
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 50%;
+    background: rgba(8,9,11,.78);
+    color: var(--bone);
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 860px) {
+    .slide { overflow-y: auto; }
+    .two-col, .design-grid { grid-template-columns: 1fr; }
+    .signal-map, .signal-lines { opacity: .35; transform: scale(.82); transform-origin: top right; }
+    .method, .diagnostic { position: relative; left: auto; right: auto; top: auto; margin-top: 48px; grid-template-columns: repeat(2, 1fr); }
+    .mantra { position: relative; bottom: auto; margin-top: 40px; }
+  }
+</style>
+</head>
+<body>
+<main class="deck" aria-live="polite">
+
+  <section class="slide light active">
+    <p class="eyebrow">Style Statement</p>
+    <h2>Human Systems Modernism</h2>
+    <p class="statement">I love WFE's visual style, but if you asked me to describe it, I'd probably say something vague about alive color, nervous-system energy, and serious-but-human consulting vibes. More precisely, WFE's aesthetic is <strong>human systems modernism</strong>: it takes the familiar language of organizational work - diagnostics, frameworks, operating systems, leadership models, and data - and gives it warmth, motion, and emotional intelligence.</p>
+    <p class="statement" style="font-size: clamp(21px, 2.2vw, 30px); max-width: 1040px;">The style is rooted in WFE's central tension: rigorous enough for complex, high-stress organizations, but human enough to start where the work actually begins: the body, the nervous system, the manager layer, and the lived experience of teams under pressure. In that sense, WFE's aesthetic mirrors its methodology: it makes the invisible human layer of work visible, structured, and actionable.</p>
+    <div class="footer"><span>WFE / Human Systems Modernism</span><span>01</span></div>
+  </section>
+
+  <section class="slide light">
+    <p class="eyebrow">Design System</p>
+    <h2>Palette, type, and visual elements</h2>
+    <div class="design-grid" style="margin-top: 34px;">
+      <div class="design-block">
+        <h3>Color Palette</h3>
+        <div class="swatches">
+          <div class="swatch" style="background:#111317">Ink</div>
+          <div class="swatch" style="background:#24162f">Plum</div>
+          <div class="swatch light-text" style="background:#f6f2eb">Paper</div>
+          <div class="swatch" style="background:#ff725c">Coral</div>
+          <div class="swatch" style="background:#28a7ff">Blue</div>
+          <div class="swatch" style="background:#5ed69a">Green</div>
+        </div>
+      </div>
+      <div class="design-block">
+        <h3>Typography</h3>
+        <div class="type-sample">
+          <div class="type-serif">Editorial serif for thesis moments</div>
+          <div class="type-sans">Modern sans for business clarity</div>
+          <div class="type-mono">SF Mono style for labels, data, diagnostics</div>
+        </div>
+      </div>
+      <div class="design-block">
+        <h3>Elements</h3>
+        <ul>
+          <li>Dark grid fields for rigor and operational structure</li>
+          <li>Signal lines, nodes, and pulses for the human layer</li>
+          <li>Large serif headlines paired with compact evidence modules</li>
+          <li>Diagnostic charts that feel precise without becoming clinical</li>
+        </ul>
+      </div>
+      <div class="design-block">
+        <h3>Composition Rules</h3>
+        <ul>
+          <li>Use color as signal, not decoration</li>
+          <li>Alternate dark briefing slides with warm paper slides</li>
+          <li>Keep data clean; let motion and contrast carry the life</li>
+          <li>Avoid stock people, wellness pastels, and generic training visuals</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>WFE / Human Systems Modernism</span><span>02</span></div>
+  </section>
+
+  <section class="slide dark">
+    <p class="eyebrow">WFE</p>
+    <h1>Human Systems<br>Modernism</h1>
+    <p class="lead">A deck style for making the invisible human operating system of work visible: structured enough for buyers to trust, alive enough for people to feel themselves in it.</p>
+    <div class="signal-lines" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="signal-map" aria-hidden="true">
+      <div class="connector" style="left:176px;top:176px;width:136px;transform:rotate(-35deg);background:var(--blue);"></div>
+      <div class="connector" style="left:176px;top:176px;width:136px;transform:rotate(41deg);background:var(--green);"></div>
+      <div class="connector" style="left:176px;top:176px;width:142px;transform:rotate(13deg);background:var(--violet);"></div>
+      <div class="connector" style="left:176px;top:176px;width:142px;transform:rotate(-152deg);background:var(--coral);"></div>
+      <div class="node core">HUMAN<br>LAYER</div>
+      <div class="node" data-label="State" style="left:28px;top:54px;background:var(--coral);"></div>
+      <div class="node" data-label="Trust" style="right:18px;top:76px;background:var(--blue);"></div>
+      <div class="node" data-label="Team" style="right:70px;bottom:18px;background:var(--green);"></div>
+      <div class="node" data-label="Capacity" style="left:44px;bottom:36px;background:var(--amber);"></div>
+      <div class="node" data-label="Signal" style="right:-4px;top:190px;background:var(--violet);"></div>
+    </div>
+    <div class="footer"><span>WFE / Human Systems Modernism</span><span>03</span></div>
+  </section>
+
+  <section class="slide light">
+    <p class="eyebrow">Style Thesis</p>
+    <div class="two-col">
+      <div>
+        <h2>Rigor with a pulse.</h2>
+        <p class="lead">The visual system should feel like organizational consulting after it has learned to see the body, the manager layer, and the lived experience of pressure.</p>
+      </div>
+      <div class="system-card">
+        <div class="label" style="color:var(--muted);">Structure</div>
+        <div style="height: 1px; background:#555d66; margin: 0 0 54px;"></div>
+        <div style="height: 1px; background:#555d66; margin: 0 0 54px; width: 86%;"></div>
+        <div style="height: 1px; background:#555d66; margin: 0 0 74px; width: 66%;"></div>
+        <p class="small" style="color:var(--bone);font-weight:800;margin-bottom:38px;">human signal</p>
+        <svg viewBox="0 0 300 90" width="100%" height="90" aria-hidden="true">
+          <polyline points="20,40 70,68 118,68 170,42 220,42 270,58" fill="none" stroke="#fffaf1" stroke-width="2" opacity=".7"/>
+          <circle cx="20" cy="40" r="8" fill="#ff725c"/><circle cx="70" cy="68" r="8" fill="#28a7ff"/><circle cx="118" cy="68" r="8" fill="#f4b85b"/><circle cx="170" cy="42" r="8" fill="#5ed69a"/><circle cx="220" cy="42" r="8" fill="#28a7ff"/><circle cx="270" cy="58" r="8" fill="#f4b85b"/>
+        </svg>
+        <p class="small muted">The point is not decoration. It is showing that the system has living variables.</p>
+      </div>
+    </div>
+    <div class="footer"><span>WFE / Human Systems Modernism</span><span>04</span></div>
+  </section>
+
+  <section class="slide light">
+    <p class="eyebrow" style="color:var(--blue);">Positioning Contrast</p>
+    <h2 style="font-family:Avenir, Inter, Aptos, sans-serif;line-height:1.12;">Traditional consulting optimizes systems.<br>WFE strengthens the humans inside them.</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:148px;margin-top:82px;">
+      <div class="system-card light-card">
+        <div class="label">Operating System</div>
+        <ul><li>Processes</li><li>Governance</li><li>Tools</li><li>Execution</li></ul>
+      </div>
+      <div class="system-card">
+        <div class="label">Human System</div>
+        <ul><li>State</li><li>Trust</li><li>Energy</li><li>Adaptation</li></ul>
+      </div>
+    </div>
+    <div class="bridge">WFE lives here</div>
+    <div class="footer"><span>WFE / Human Systems Modernism</span><span>05</span></div>
+  </section>
+
+  <section class="slide dark">
+    <p class="eyebrow">Inside-Out Methodology</p>
+    <h2>Performance begins before strategy.</h2>
+    <div class="signal-lines" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="method">
+      <div class="step">Body</div>
+      <div class="step">Nervous<br>System</div>
+      <div class="step">Emotions</div>
+      <div class="step">Energy</div>
+      <div class="step">Leadership</div>
+      <div class="step">Organization</div>
+    </div>
+    <div class="mantra">State -> Story -> Strategy</div>
+    <div class="footer"><span>WFE / Human Systems Modernism</span><span>06</span></div>
+  </section>
+
+  <section class="slide light">
+    <p class="eyebrow" style="color:var(--plum);">Survey-First Diagnostics</p>
+    <h2 style="font-family:Avenir, Inter, Aptos, sans-serif;line-height:1.1;">Make pressure legible before you prescribe.</h2>
+    <div class="diagnostic">
+      <div class="bar-wrap"><div class="bar-label">Clarity</div><div class="bar" style="height:72%;"></div><div class="bar-value">72%</div></div>
+      <div class="bar-wrap"><div class="bar-label">Trust</div><div class="bar" style="height:48%;background:var(--green);"></div><div class="bar-value">48%</div></div>
+      <div class="bar-wrap"><div class="bar-label">Burnout</div><div class="bar" style="height:83%;background:var(--coral);"></div><div class="bar-value">83%</div></div>
+      <div class="bar-wrap"><div class="bar-label">Manager Load</div><div class="bar" style="height:76%;background:var(--amber);"></div><div class="bar-value">76%</div></div>
+      <div class="bar-wrap"><div class="bar-label">Agency</div><div class="bar" style="height:54%;background:var(--violet);"></div><div class="bar-value">54%</div></div>
+      <div class="bar-wrap"><div class="bar-label">Connection</div><div class="bar" style="height:39%;background:var(--bone);"></div><div class="bar-value">39%</div></div>
+    </div>
+    <p class="small muted" style="position:absolute;left:11vw;bottom:88px;max-width:780px;">Diagnostic slides should feel precise, not clinical: evidence with warmth, data with a route into action.</p>
+    <div class="footer"><span>WFE / Human Systems Modernism</span><span>07</span></div>
+  </section>
+
+  <section class="slide plum">
+    <p class="eyebrow">The Result</p>
+    <h2>A deck that looks like the work feels.</h2>
+    <p class="lead" style="max-width: 720px;">Serious enough for a buyer. Warm enough for a room. Structured enough to hold complexity. Alive enough to name what is actually happening underneath it.</p>
+    <div class="signal-map" style="right:15vw;top:22vh;" aria-hidden="true">
+      <div class="connector" style="left:176px;top:176px;width:90px;transform:rotate(0deg);background:var(--green);"></div>
+      <div class="connector" style="left:176px;top:176px;width:90px;transform:rotate(90deg);background:var(--violet);"></div>
+      <div class="connector" style="left:176px;top:176px;width:110px;transform:rotate(45deg);background:var(--amber);"></div>
+      <div class="node" style="left:126px;top:126px;width:54px;height:54px;background:var(--coral);"></div>
+      <div class="node" style="left:80px;top:70px;background:var(--blue);"></div>
+      <div class="node" style="right:70px;top:58px;background:var(--green);"></div>
+      <div class="node" style="right:38px;bottom:58px;background:var(--amber);"></div>
+      <div class="node" style="left:42px;bottom:54px;background:var(--violet);"></div>
+    </div>
+    <div class="footer"><span>WFE / Human Systems Modernism</span><span>08</span></div>
+  </section>
+</main>
+
+<div class="nav" aria-label="Slide controls">
+  <button type="button" id="prev" aria-label="Previous slide">&lsaquo;</button>
+  <button type="button" id="next" aria-label="Next slide">&rsaquo;</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  let current = 0;
+
+  function show(index) {
+    current = (index + slides.length) % slides.length;
+    slides.forEach((slide, i) => slide.classList.toggle("active", i === current));
+  }
+
+  document.getElementById("prev").addEventListener("click", () => show(current - 1));
+  document.getElementById("next").addEventListener("click", () => show(current + 1));
+
+  window.addEventListener("keydown", (event) => {
+    if (["ArrowRight", " ", "PageDown"].includes(event.key)) show(current + 1);
+    if (["ArrowLeft", "PageUp"].includes(event.key)) show(current - 1);
+  });
+</script>
+</body>
+</html>
