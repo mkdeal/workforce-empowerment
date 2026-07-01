@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Missing Layer: Building Stronger from the Inside Out — Unified Direction</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+  :root {
+    --ink: #f8fbff;
+    --ink-2: #e5ecff;
+    --slate: #c9d4f5;
+    --muted: #94a3c7;
+    --line: rgba(248, 251, 255, 0.14);
+    --off-black: #172554;
+    --paper: #0b1440;
+    --cloud: #172554;
+    --white: #f8fbff;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+    --teal: #2dd4bf;
+    --yellow: #facc15;
+    --pink: #ec4899;
+    --blue-10: rgba(59,130,246,0.14);
+    --purple-10: rgba(139,92,246,0.14);
+    --teal-10: rgba(45,212,191,0.14);
+    --yellow-10: rgba(250,204,21,0.14);
+    --pink-10: rgba(236,72,153,0.14);
+    --glass: rgba(23, 37, 84, 0.72);
+    --glass-strong: rgba(15, 23, 61, 0.9);
+    --shadow: 0 20px 58px rgba(0,0,0,0.34), 0 8px 22px rgba(0,0,0,0.22);
+    --shadow-soft: 0 14px 36px rgba(0,0,0,0.26);
+    --radius: 16px;
+    --display: "Avenir Next", Avenir, Inter, Aptos, "Helvetica Neue", Arial, sans-serif;
+    --sans: "Inter", "Avenir Next", Avenir, Aptos, "Helvetica Neue", Arial, sans-serif;
+    --mono: "SFMono-Regular", "SF Mono", "Roboto Mono", "Cascadia Mono", Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--off-black);
+  }
+
+  .deck { width: 100vw; height: 100vh; position: relative; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    padding: 52px 68px;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 14% 12%, rgba(45,212,191,0.14), transparent 32%),
+      radial-gradient(circle at 88% 10%, rgba(139,92,246,0.16), transparent 34%),
+      radial-gradient(circle at 60% 92%, rgba(236,72,153,0.10), transparent 34%),
+      linear-gradient(150deg, #0b1440 0%, #172554 55%, #1c2d63 100%);
+    opacity: 0;
+    transition: opacity 0.42s ease;
+  }
+
+  .slide.active { display: flex; opacity: 1; }
+
+  /* Subtle constellation texture: small dots connected by soft curves, not a rigid grid */
+  .slide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='180'%20height='180'%20viewBox='0%200%20180%20180'%3E%3Cg%20fill='none'%20stroke='%23f8fbff'%20stroke-opacity='0.055'%20stroke-width='1'%20stroke-linecap='round'%3E%3Cpath%20d='M22%2034%20C%2048%2012%2c%2078%2058%2c%20104%2028'/%3E%3Cpath%20d='M104%2028%20C%20126%2048%2c%2098%2094%2c%20136%20114'/%3E%3Cpath%20d='M22%2034%20C%2010%2074%2c%2058%2098%2c%2042%20146'/%3E%3Cpath%20d='M136%20114%20C%20156%20134%2c%20114%20152%2c%20146%20162'/%3E%3Cpath%20d='M42%20146%20C%2072%20160%2c%20100%20140%2c%20136%20114'/%3E%3C/g%3E%3Cg%20fill='%23f8fbff'%20fill-opacity='0.14'%3E%3Ccircle%20cx='22'%20cy='34'%20r='2'/%3E%3Ccircle%20cx='104'%20cy='28'%20r='1.6'/%3E%3Ccircle%20cx='136'%20cy='114'%20r='2'/%3E%3Ccircle%20cx='42'%20cy='146'%20r='1.6'/%3E%3Ccircle%20cx='146'%20cy='162'%20r='1.3'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 180px 180px;
+    mask-image: linear-gradient(120deg, rgba(0,0,0,0.4), transparent 62%);
+    -webkit-mask-image: linear-gradient(120deg, rgba(0,0,0,0.4), transparent 62%);
+    pointer-events: none;
+  }
+
+  .slide::after {
+    content: "";
+    position: absolute;
+    right: 0; top: 0;
+    width: 34vw; height: 16px;
+    background: linear-gradient(90deg, rgba(45,212,191,0), rgba(45,212,191,0.85), rgba(59,130,246,0.9), rgba(139,92,246,0.85), rgba(236,72,153,0.75));
+    border-radius: 0 0 0 999px;
+    filter: saturate(1.05);
+    pointer-events: none;
+  }
+
+  .slide-content { position: relative; z-index: 2; align-self: center; width: 100%; }
+
+  /* Slide labels / utility text: mono stack for labels, sources, annotations */
+  .slide-label, .stat-source, .footnote, .quote-context, .mini-label, .node-label, .section-badge, .kicker {
+    font-family: var(--mono);
+  }
+
+  .slide-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: 54px;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 18px;
+    letter-spacing: -0.5px;
+  }
+  h1 strong { font-weight: 800; }
+  h1 em { font-style: italic; color: var(--pink); font-weight: 500; }
+
+  h2 {
+    font-family: var(--display);
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.18;
+    color: var(--ink);
+    margin-bottom: 14px;
+    letter-spacing: -0.3px;
+  }
+  h2 strong { font-weight: 800; color: var(--white); }
+
+  h3 {
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  p, li {
+    font-size: 15.5px;
+    line-height: 1.6;
+    font-weight: 400;
+    color: var(--slate);
+  }
+
+  .lead {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--slate);
+    max-width: 780px;
+  }
+
+  .subtitle { font-size: 18px; color: var(--muted); max-width: 480px; }
+
+  /* Cards */
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(14px);
+  }
+
+  .card--blue { background: linear-gradient(155deg, var(--blue), #2f6fe0); color: var(--white); border: none; }
+  .card--blue h3, .card--blue p, .card--blue .stat-desc { color: var(--white); }
+  .card--blue .stat-desc { opacity: 0.85; }
+
+  .card--purple { background: linear-gradient(155deg, var(--purple), #7a4ee0); color: var(--white); border: none; }
+  .card--purple h3, .card--purple p { color: var(--white); }
+
+  .card--dark { background: var(--glass-strong); color: var(--white); border: 1px solid var(--line); }
+  .card--dark h3, .card--dark p, .card--dark li { color: var(--white); }
+  .card--dark .stat-desc, .card--dark p { opacity: 0.85; }
+
+  .stat-source { font-size: 11px; color: var(--muted); margin-top: 4px; font-weight: 400; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+  .card-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .card-icon--blue-subtle { background: var(--blue-10); color: var(--blue); }
+  .card-icon--purple-subtle { background: var(--purple-10); color: var(--purple); }
+  .card-icon--teal-subtle { background: var(--teal-10); color: var(--teal); }
+  .card-icon--white-subtle { background: rgba(248,251,255,0.16); color: var(--white); }
+
+  blockquote {
+    padding: 16px 0 16px 20px;
+    border-left: 3px solid var(--pink);
+    font-size: 16px;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 700px;
+  }
+
+  .quote-card {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 12px;
+    border-left: 3px solid var(--pink);
+    backdrop-filter: blur(14px);
+  }
+  .quote-text { font-style: italic; font-size: 15px; line-height: 1.5; color: var(--pink); opacity: 0.92; margin-bottom: 4px; filter: brightness(1.35); }
+  .quote-context { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+
+  .data-card {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow-soft);
+    border-top: 3px solid var(--teal);
+    backdrop-filter: blur(14px);
+  }
+
+  .beliefs { list-style: none; }
+  .beliefs li {
+    padding: 7px 0;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--slate);
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .beliefs li:last-child { border-bottom: none; }
+  .belief-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--pink); flex-shrink: 0; margin-top: 7px; }
+  .belief-head { font-weight: 700; color: var(--ink); }
+
+  .method-nodes { display: flex; gap: 14px; margin-top: 14px; }
+  .node { flex: 1; padding: 18px; border-radius: 14px; box-shadow: var(--shadow-soft); }
+  .node--reg { background: linear-gradient(155deg, var(--teal), #1fb8a8); color: var(--off-black); }
+  .node--ref { background: linear-gradient(155deg, var(--purple), #7a4ee0); color: var(--white); }
+  .node--act { background: linear-gradient(155deg, var(--blue), #2f6fe0); color: var(--white); }
+  .node-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; opacity: 0.85; }
+  .node p { font-size: 13px; line-height: 1.5; opacity: 0.9; }
+  .node--reg p, .node--reg .node-label { color: var(--off-black); }
+  .node--ref p, .node--act p { color: var(--white); }
+
+  .value-card {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(14px);
+  }
+  .value-card h3 { font-size: 15px; margin-bottom: 6px; }
+  .value-card p { font-size: 13.5px; line-height: 1.55; color: var(--slate); }
+
+  .drivers-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .driver-pill {
+    padding: 8px 14px; border-radius: 10px;
+    font-size: 12px; font-weight: 600; text-align: center;
+    flex: 1; min-width: 120px;
+    color: var(--off-black);
+  }
+  .driver-pill.blue { background: var(--blue); color: var(--white); }
+  .driver-pill.purple { background: var(--purple); color: var(--white); }
+  .driver-pill.teal { background: var(--teal); }
+  .driver-pill.pink { background: var(--pink); color: var(--white); }
+  .driver-pill.yellow { background: var(--yellow); }
+
+  .divider { width: 46px; height: 3px; background: var(--pink); border-radius: 2px; margin: 16px 0; }
+
+  .footnote { font-size: 11.5px; color: var(--muted); margin-top: 16px; letter-spacing: 0.3px; }
+
+  .cta-line {
+    font-size: 21px; font-weight: 400; font-style: italic; line-height: 1.55;
+    color: var(--pink); max-width: 600px; margin-top: 24px;
+    filter: brightness(1.3);
+  }
+
+  .contact-cards { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+  .contact-card {
+    padding: 15px 22px; border-radius: 14px; color: var(--white);
+    font-size: 15px; font-weight: 500;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: var(--shadow-soft);
+  }
+  .contact-icon {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  .section-badge {
+    display: inline-block;
+    font-size: 10.5px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 8px; margin-bottom: 14px;
+  }
+  .section-badge--purple { background: var(--purple-10); color: var(--purple); filter: brightness(1.4); }
+  .section-badge--teal { background: var(--teal-10); color: var(--teal); }
+  .section-badge--blue { background: var(--blue-10); color: var(--blue); filter: brightness(1.5); }
+
+  .callout-banner {
+    background: var(--glass-strong);
+    border: 1px solid var(--line);
+    color: var(--white);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-top: 16px;
+  }
+  .callout-banner .bridge-label {
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--yellow); margin-bottom: 8px;
+  }
+  .callout-banner p { font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
+  .callout-banner strong { color: var(--white); }
+
+  .pos-card {
+    background: var(--blue-10);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 14px 14px 0;
+    padding: 18px 24px; margin-bottom: 24px;
+  }
+  .pos-card p { font-size: 17px; font-style: italic; line-height: 1.5; color: var(--ink-2); }
+
+  .hero-cards {
+    position: absolute; right: 60px; top: 50%; transform: translateY(-50%); z-index: 2;
+    display: flex; flex-direction: column; gap: 16px; width: 340px;
+  }
+  .hero-mini-card {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 22px;
+    box-shadow: var(--shadow);
+    display: flex; align-items: center; gap: 16px;
+    backdrop-filter: blur(14px);
+  }
+  .hero-mini-card .mini-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .hero-mini-card .mini-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+  .hero-mini-card .mini-value { font-size: 19px; font-weight: 700; color: var(--white); font-family: var(--display); }
+
+  .how-text { font-size: 13.5px; line-height: 1.6; color: var(--slate); margin-bottom: 12px; }
+  .how-label { font-size: 13.5px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+
+  /* Style-guide swatches (slide 0) */
+  .swatches { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 10px; }
+  .swatch { height: 54px; border-radius: 8px; border: 1px solid var(--line); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; }
+  .swatch span { font-family: var(--mono); font-size: 9px; opacity: 0.85; }
+  .style-token {
+    padding: 20px 22px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+  }
+  .type-sample { padding: 4px 0; }
+  .type-sample .label { font-family: var(--mono); font-size: 10.5px; color: var(--teal); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+
+  .nav { position: fixed; bottom: 24px; right: 30px; display: flex; gap: 8px; z-index: 100; }
+  .nav button {
+    background: rgba(248,251,255,0.08);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    width: 40px; height: 40px; border-radius: 10px;
+    cursor: pointer; font-size: 16px;
+    transition: background 0.2s;
+  }
+  .nav button:hover { background: rgba(248,251,255,0.16); }
+
+  .slide-counter {
+    position: fixed; bottom: 30px; left: 30px;
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 500; color: var(--muted); z-index: 100;
+  }
+
+  svg text { font-family: var(--sans); }
+
+  @media print {
+    body { overflow: visible; height: auto; width: auto; background: var(--off-black); }
+    .deck { width: auto; height: auto; position: static; }
+    .slide {
+      display: flex !important; opacity: 1 !important; position: relative !important;
+      width: 100% !important; height: 100vh !important;
+      page-break-after: always; break-after: page;
+      page-break-inside: avoid; break-inside: avoid;
+    }
+    .slide:last-of-type { page-break-after: avoid; }
+    .nav, .slide-counter { display: none !important; }
+    .slide, .card, .quote-card, .value-card, .callout-banner, [style*="background"] {
+      print-color-adjust: exact; -webkit-print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- ==================== SLIDE 0: VISUAL SYSTEM ==================== -->
+  <div class="slide active" id="s0">
+    <div class="slide-content">
+      <div class="slide-label">Visual System — Draft for Review</div>
+      <h2>Unified <strong>color, type & texture</strong> direction</h2>
+      <div class="two-col" style="margin-top: 20px;">
+        <div class="style-token">
+          <h3>Fonts</h3>
+          <div class="type-sample">
+            <div class="label">Headers</div>
+            <p style="font-family: var(--display); font-size: 20px; font-weight: 700; color: var(--white);">Avenir Next / Avenir / Inter stack</p>
+          </div>
+          <div class="type-sample" style="margin-top: 10px;">
+            <div class="label">Body</div>
+            <p style="font-family: var(--sans); font-size: 15px;">Inter (closest free match to Forma's Labil Grotesk body face), Avenir Next fallback</p>
+          </div>
+          <div class="type-sample" style="margin-top: 10px;">
+            <div class="label">Utility</div>
+            <p style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.5px;">SF Mono stack — labels, sources, annotations</p>
+          </div>
+        </div>
+        <div class="style-token">
+          <h3>Color Palette</h3>
+          <p style="margin-bottom: 6px;">Off-black base, white ink, five accent colors carried from the Dark Warm direction.</p>
+          <div class="swatches">
+            <div class="swatch" style="background:#172554;"><span style="color:#f8fbff;">off-black</span></div>
+            <div class="swatch" style="background:#f8fbff;"><span style="color:#172554;">white</span></div>
+            <div class="swatch" style="background:#3b82f6;"><span style="color:#f8fbff;">blue</span></div>
+            <div class="swatch" style="background:#8b5cf6;"><span style="color:#f8fbff;">purple</span></div>
+            <div class="swatch" style="background:#2dd4bf;"><span style="color:#172554;">teal</span></div>
+            <div class="swatch" style="background:#facc15;"><span style="color:#172554;">yellow</span></div>
+            <div class="swatch" style="background:#ec4899;"><span style="color:#f8fbff;">pink</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="style-token" style="margin-top: 16px;">
+        <h3>Texture</h3>
+        <p>Background carries a subtle constellation of dots and connecting curves (visible faintly at each slide's upper-left) — the same idea as the graph-paper grid, but organic rather than rigid boxes.</p>
+      </div>
+      <div class="callout-banner" style="margin-top: 16px;">
+        <div class="bridge-label">Color usage in this draft</div>
+        <p><strong style="color: var(--blue);">Blue</strong> = the Business System · <strong style="color: var(--purple);">Purple</strong> = the Owner System · <strong style="color: var(--teal);">Teal</strong> = evidence &amp; calm · <strong style="color: var(--yellow);">Yellow</strong> = attention &amp; highlight · <strong style="color: var(--pink);">Pink</strong> = voice, warmth &amp; the call to action.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 1: TITLE ==================== -->
+  <div class="slide" id="s1">
+    <div class="slide-content" style="display: flex; align-items: center;">
+      <div style="max-width: 550px;">
+        <div class="slide-label">Workforce Empowerment</div>
+        <h1>The Missing Layer:<br><em>Building Stronger<br>from the Inside Out</em></h1>
+        <div class="divider"></div>
+        <p class="subtitle" style="white-space: nowrap;">A partnership proposal for the Sisters Business Association</p>
+        <p style="font-size: 18px; font-weight: 400; font-style: italic; color: var(--muted); margin-top: 6px;">2026</p>
+      </div>
+      <div class="hero-cards">
+        <div class="hero-mini-card">
+          <div class="mini-icon" style="background: var(--purple-10);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div>
+            <div class="mini-label">Human Layer</div>
+            <div class="mini-value">The Owner Dimension</div>
+          </div>
+        </div>
+        <div class="hero-mini-card">
+          <div class="mini-icon" style="background: var(--blue-10);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div>
+            <div class="mini-label">Evidence-Based</div>
+            <div class="mini-value">Behavioral Science</div>
+          </div>
+        </div>
+        <div class="hero-mini-card">
+          <div class="mini-icon" style="background: var(--teal-10);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <div class="mini-label">Methodology</div>
+            <div class="mini-value">Inside Out</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 2: WE HEARD YOU ==================== -->
+  <div class="slide" id="s2">
+    <div class="slide-content">
+      <div class="slide-label">We Heard You</div>
+      <h2>The reality <strong>you described</strong></h2>
+      <div class="two-col" style="margin-top: 12px;">
+        <div>
+          <div class="data-card">
+            <h3 style="margin-bottom: 16px;">Sisters, Oregon</h3>
+            <svg viewBox="0 0 380 180" style="width: 100%; margin-bottom: 12px;">
+              <text x="0" y="14" fill="var(--muted)" font-size="10" font-weight="500">ECONOMIC IMPACT</text>
+              <rect x="0" y="28" width="280" height="28" rx="6" fill="var(--pink)" opacity="0.85"/>
+              <text x="14" y="46" fill="white" font-size="12" font-weight="600">Flat Fire: $29M</text>
+              <text x="180" y="46" fill="white" font-size="10" opacity="0.85">peak season lost</text>
+              <rect x="0" y="62" width="200" height="28" rx="6" fill="var(--blue)"/>
+              <text x="14" y="80" fill="white" font-size="12" font-weight="600">Hoodoo: ~$8M</text>
+              <text x="144" y="80" fill="white" font-size="10" opacity="0.85">~350 jobs</text>
+              <rect x="0" y="96" width="220" height="28" rx="6" fill="var(--purple)" opacity="0.9"/>
+              <text x="14" y="114" fill="white" font-size="12" font-weight="600">ODOT: 30% revenue decrease</text>
+              <text x="0" y="146" fill="var(--muted)" font-size="10" font-weight="500">COMMUNITY SNAPSHOT</text>
+              <rect x="0" y="156" width="160" height="6" rx="3" fill="rgba(248,251,255,0.12)"/>
+              <rect x="0" y="156" width="62" height="6" rx="3" fill="var(--pink)"/>
+              <text x="168" y="162" fill="var(--slate)" font-size="10">39% age 65+</text>
+              <rect x="0" y="172" width="160" height="6" rx="3" fill="rgba(248,251,255,0.12)"/>
+              <rect x="0" y="172" width="130" height="6" rx="3" fill="var(--blue)"/>
+              <text x="168" y="178" fill="var(--slate)" font-size="10">Living expense: Sisters &gt; Bend</text>
+            </svg>
+            <div style="display: flex; gap: 12px;">
+              <div style="flex:1; padding: 10px 14px; background: rgba(248,251,255,0.06); border-radius: 10px;">
+                <div style="font-size: 22px; font-weight: 800; color: var(--white); font-family: var(--display);">~3,073</div>
+                <div style="font-size: 11px; color: var(--muted);">Population (2020)</div>
+              </div>
+              <div style="flex:1; padding: 10px 14px; background: rgba(248,251,255,0.06); border-radius: 10px;">
+                <div style="font-size: 22px; font-weight: 800; color: var(--white); font-family: var(--display);">49.6</div>
+                <div style="font-size: 11px; color: var(--muted);">Median age</div>
+              </div>
+              <div style="flex:1; padding: 10px 14px; background: rgba(248,251,255,0.06); border-radius: 10px;">
+                <div style="font-size: 22px; font-weight: 800; color: var(--white); font-family: var(--display);">$1,780+</div>
+                <div style="font-size: 11px; color: var(--muted);">1BR rent/mo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="quote-card">
+            <div class="quote-text">"Staffing, staffing, staffing, staffing."</div>
+            <div class="quote-context">Childcare. Housing. Healthcare. All underneath.</div>
+          </div>
+          <div class="quote-card">
+            <div class="quote-text">"There was no nest egg last year."</div>
+            <div class="quote-context">Flat fire shut summer down. No snow all winter. ODOT blocked downtown.</div>
+          </div>
+          <div class="quote-card">
+            <div class="quote-text">"Less than 25 an hour... very expensive to live here."</div>
+            <div class="quote-context">Can't move wages up. Three of fifteen might last a year.</div>
+          </div>
+          <div class="quote-card">
+            <div class="quote-text">"The bottom line is the culture, but it's also the community."</div>
+          </div>
+        </div>
+      </div>
+      <div class="callout-banner" style="margin-top: 16px; display: flex; gap: 24px; align-items: center; padding: 18px 24px;">
+        <div style="flex-shrink: 0;">
+          <div class="bridge-label">You're Not Alone</div>
+          <p style="max-width: 260px;">Sisters is a local version of a national pattern. Small businesses everywhere are operating with less slack.</p>
+        </div>
+        <div style="display: flex; gap: 14px; flex: 1;">
+          <div style="flex: 1; background: rgba(248,251,255,0.06); border-radius: 10px; padding: 12px 14px; text-align: center;">
+            <div style="font-size: 24px; font-weight: 800; color: var(--yellow); font-family: var(--display);">77%</div>
+            <div style="font-size: 11px; color: var(--ink-2); line-height: 1.3; margin-top: 2px;">rising-cost or tariff challenges</div>
+            <div style="font-size: 9px; color: var(--muted); margin-top: 4px; font-family: var(--mono);">Federal Reserve 2026</div>
+          </div>
+          <div style="flex: 1; background: rgba(248,251,255,0.06); border-radius: 10px; padding: 12px 14px; text-align: center;">
+            <div style="font-size: 24px; font-weight: 800; color: var(--yellow); font-family: var(--display);">16→26%</div>
+            <div style="font-size: 11px; color: var(--ink-2); line-height: 1.3; margin-top: 2px;">talent concern in one year</div>
+            <div style="font-size: 9px; color: var(--muted); margin-top: 4px; font-family: var(--mono);">U.S. Chamber Q4 2025</div>
+          </div>
+          <div style="flex: 1; background: rgba(248,251,255,0.06); border-radius: 10px; padding: 12px 14px; text-align: center;">
+            <div style="font-size: 22px; font-weight: 800; color: var(--yellow); font-family: var(--display);">Lowest</div>
+            <div style="font-size: 11px; color: var(--ink-2); line-height: 1.3; margin-top: 2px;">revenue expectations since 2020</div>
+            <div style="font-size: 9px; color: var(--muted); margin-top: 4px; font-family: var(--mono);">Federal Reserve 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 3: BUSINESS DIMENSION ==================== -->
+  <div class="slide" id="s3">
+    <div class="slide-content">
+      <div class="slide-label">The Business Dimension</div>
+      <h2>Where most of the attention goes: the <strong>Business System</strong></h2>
+      <div style="display: flex; gap: 50px; margin-top: 20px; align-items: center;">
+        <div style="flex: 1;">
+          <p class="lead" style="margin-bottom: 16px;">Most business owners focus almost entirely on one dimension: the <strong style="color: var(--white);">Business System</strong>.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+            <span style="padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--blue); color: var(--white);">Pricing</span>
+            <span style="padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--blue); color: var(--white);">Staffing</span>
+            <span style="padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--blue); color: var(--white);">Scheduling</span>
+            <span style="padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--blue); color: var(--white);">Workflows</span>
+            <span style="padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--blue); color: var(--white);">SOPs</span>
+            <span style="padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--blue); color: var(--white);">Marketing</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px;">
+            <span style="padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--blue-10); color: var(--blue); filter: brightness(1.5);">Revenue</span>
+            <span style="padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--blue-10); color: var(--blue); filter: brightness(1.5);">Inventory</span>
+            <span style="padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--blue-10); color: var(--blue); filter: brightness(1.5);">Budgeting</span>
+            <span style="padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--blue-10); color: var(--blue); filter: brightness(1.5);">Compliance</span>
+            <span style="padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--blue-10); color: var(--blue); filter: brightness(1.5);">Hiring</span>
+            <span style="padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--blue-10); color: var(--blue); filter: brightness(1.5);">Customer Service</span>
+          </div>
+          <p class="lead" style="margin-bottom: 12px;">That's natural. It's what feels urgent.</p>
+          <p class="lead" style="margin-bottom: 20px;">The SBA's perks calendar reflects this too: finance, marketing, HR, operations.</p>
+          <div class="divider"></div>
+          <blockquote>The instinct is to solve business problems with business solutions.</blockquote>
+        </div>
+        <div style="flex: 0 0 340px; display: flex; justify-content: center;">
+          <svg viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg" style="width: 280px;">
+            <path d="M136 28 C100 30, 68 50, 48 80 C28 110, 22 148, 26 178 C30 212, 44 240, 68 258 C88 272, 112 280, 136 282" fill="var(--blue)" stroke="#2f6fe0" stroke-width="1.5"/>
+            <path d="M120 50 C95 66, 78 78, 58 90" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+            <path d="M130 78 C105 94, 75 108, 45 128" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+            <path d="M132 118 C105 128, 72 142, 38 156" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+            <path d="M130 158 C100 168, 68 180, 40 192" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+            <path d="M128 198 C100 210, 72 224, 52 236" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+            <path d="M124 238 C100 248, 80 258, 66 264" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.15" stroke-linecap="round"/>
+            <path d="M144 28 C180 30, 212 50, 232 80 C252 110, 258 148, 254 178 C250 212, 236 240, 212 258 C192 272, 168 280, 144 282" fill="rgba(248,251,255,0.06)" stroke="var(--line)" stroke-width="1.5"/>
+            <path d="M160 50 C185 66, 202 78, 222 90" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.1" stroke-linecap="round"/>
+            <path d="M150 78 C175 94, 205 108, 235 128" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.1" stroke-linecap="round"/>
+            <path d="M148 118 C175 128, 208 142, 242 156" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.1" stroke-linecap="round"/>
+            <path d="M150 158 C180 168, 212 180, 240 192" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.1" stroke-linecap="round"/>
+            <path d="M152 198 C180 210, 208 224, 228 236" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.1" stroke-linecap="round"/>
+            <line x1="140" y1="24" x2="140" y2="286" stroke="var(--line)" stroke-width="1.5"/>
+            <text x="80" y="306" text-anchor="middle" font-size="11" font-weight="700" fill="var(--blue)" letter-spacing="1.5">BUSINESS</text>
+            <text x="80" y="318" text-anchor="middle" font-size="11" font-weight="700" fill="var(--blue)" letter-spacing="1.5">SYSTEM</text>
+            <text x="200" y="306" text-anchor="middle" font-size="11" font-weight="400" fill="var(--muted)" letter-spacing="1.5">OWNER</text>
+            <text x="200" y="318" text-anchor="middle" font-size="11" font-weight="400" fill="var(--muted)" letter-spacing="1.5">SYSTEM</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 4: OWNER DIMENSION ==================== -->
+  <div class="slide" id="s4">
+    <div class="slide-content">
+      <div class="slide-label">The Owner Dimension</div>
+      <h2>The other half: the <strong>Owner System</strong></h2>
+      <div style="display: flex; gap: 50px; margin-top: 16px; align-items: center;">
+        <div style="flex: 1;">
+          <p class="lead" style="margin-bottom: 14px;">When the <strong style="color: var(--white);">Owner System</strong> is overloaded, the Business System becomes harder to improve.</p>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--purple); color: var(--white); white-space: nowrap;">Energy</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--purple); color: var(--white); white-space: nowrap;">Attention</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--pink); color: var(--white); white-space: nowrap;">Emotional Regulation</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--pink); color: var(--white); white-space: nowrap;">Judgment</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--purple-10); color: var(--purple); filter: brightness(1.5); white-space: nowrap;">Confidence</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--purple-10); color: var(--purple); filter: brightness(1.5); white-space: nowrap;">Communication</span>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--purple); color: var(--white); white-space: nowrap;">Self-Awareness</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--pink); color: var(--white); white-space: nowrap;">Resilience</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--purple-10); color: var(--purple); filter: brightness(1.5); white-space: nowrap;">Focus</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--purple); color: var(--white); white-space: nowrap;">Patience</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--pink); color: var(--white); white-space: nowrap;">Presence</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--purple-10); color: var(--purple); filter: brightness(1.5); white-space: nowrap;">Clarity</span>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--pink); color: var(--white); white-space: nowrap;">Boundaries</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--purple); color: var(--white); white-space: nowrap;">Decision-Making</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--purple-10); color: var(--purple); filter: brightness(1.5); white-space: nowrap;">Trust</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--purple); color: var(--white); white-space: nowrap;">Motivation</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--pink); color: var(--white); white-space: nowrap;">Perspective</span>
+            <span style="padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; background: var(--purple-10); color: var(--purple); filter: brightness(1.5); white-space: nowrap;">Identity</span>
+          </div>
+          <div class="divider" style="margin-top: 20px;"></div>
+          <blockquote>These business problems are real. But underneath each one, there's a human dimension that's either making it harder or easier to solve. Most of the energy goes to the business side. Almost none goes to the human side. That's the gap.</blockquote>
+        </div>
+        <div style="flex: 0 0 340px; display: flex; justify-content: center;">
+          <svg viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg" style="width: 280px;">
+            <path d="M136 28 C100 30, 68 50, 48 80 C28 110, 22 148, 26 178 C30 212, 44 240, 68 258 C88 272, 112 280, 136 282" fill="rgba(248,251,255,0.06)" stroke="var(--line)" stroke-width="1.5"/>
+            <path d="M120 50 C95 66, 78 78, 58 90" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.1" stroke-linecap="round"/>
+            <path d="M130 78 C105 94, 75 108, 45 128" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.1" stroke-linecap="round"/>
+            <path d="M132 118 C105 128, 72 142, 38 156" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.1" stroke-linecap="round"/>
+            <path d="M130 158 C100 168, 68 180, 40 192" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.1" stroke-linecap="round"/>
+            <path d="M128 198 C100 210, 72 224, 52 236" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.1" stroke-linecap="round"/>
+            <path d="M144 28 C180 30, 212 50, 232 80 C252 110, 258 148, 254 178 C250 212, 236 240, 212 258 C192 272, 168 280, 144 282" fill="var(--purple)" stroke="#7a4ee0" stroke-width="1.5"/>
+            <path d="M160 50 C185 66, 202 78, 222 90" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+            <path d="M150 78 C175 94, 205 108, 235 128" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+            <path d="M148 118 C175 128, 208 142, 242 156" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+            <path d="M150 158 C180 168, 212 180, 240 192" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+            <path d="M152 198 C180 210, 208 224, 228 236" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.25" stroke-linecap="round"/>
+            <path d="M156 238 C180 248, 200 258, 214 264" stroke="var(--white)" stroke-width="1.2" fill="none" opacity="0.15" stroke-linecap="round"/>
+            <line x1="140" y1="24" x2="140" y2="286" stroke="var(--line)" stroke-width="1.5"/>
+            <text x="80" y="306" text-anchor="middle" font-size="11" font-weight="400" fill="var(--muted)" letter-spacing="1.5">BUSINESS</text>
+            <text x="80" y="318" text-anchor="middle" font-size="11" font-weight="400" fill="var(--muted)" letter-spacing="1.5">SYSTEM</text>
+            <text x="200" y="306" text-anchor="middle" font-size="11" font-weight="700" fill="var(--purple)" letter-spacing="1.5">OWNER</text>
+            <text x="200" y="318" text-anchor="middle" font-size="11" font-weight="700" fill="var(--purple)" letter-spacing="1.5">SYSTEM</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 5a: THE EVIDENCE ==================== -->
+  <div class="slide" id="s5">
+    <div class="slide-content">
+      <div class="slide-label">The Evidence</div>
+      <h2>What happens when the Owner System is <strong>neglected</strong></h2>
+      <p class="lead" style="margin-top: 10px; margin-bottom: 4px; font-style: italic; color: var(--muted);">What owners aren't saying out loud</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; margin-top: 20px;">
+        <div class="card card--purple" style="text-align: center; padding: 36px 24px;">
+          <svg viewBox="0 0 160 100" width="180" style="margin: 0 auto 16px;">
+            <path d="M20 85 A60 60 0 0 1 140 85" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="12" stroke-linecap="round"/>
+            <path d="M20 85 A60 60 0 0 1 95.6 30" fill="none" stroke="white" stroke-width="12" stroke-linecap="round"/>
+            <text x="80" y="78" text-anchor="middle" fill="white" font-size="32" font-weight="800">53%</text>
+          </svg>
+          <div style="font-size: 15px; color: var(--white); opacity: 0.9; line-height: 1.45;">emotionally drained<br>or burned out</div>
+          <div style="font-size: 11px; color: var(--white); opacity: 0.65; margin-top: 10px; font-family: var(--mono);">Bluevine / Centiment, 2026</div>
+        </div>
+        <div class="card card--blue" style="text-align: center; padding: 36px 24px;">
+          <svg viewBox="0 0 160 100" width="180" style="margin: 0 auto 16px;">
+            <path d="M20 85 A60 60 0 0 1 140 85" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="12" stroke-linecap="round"/>
+            <path d="M20 85 A60 60 0 0 1 110.4 36.5" fill="none" stroke="white" stroke-width="12" stroke-linecap="round"/>
+            <text x="80" y="78" text-anchor="middle" fill="white" font-size="32" font-weight="800">68%</text>
+          </svg>
+          <div style="font-size: 15px; color: var(--white); opacity: 0.9; line-height: 1.45;">delayed or avoided a<br>major business decision</div>
+          <div style="font-size: 11px; color: var(--white); opacity: 0.65; margin-top: 10px; font-family: var(--mono);">Bluevine / Centiment, 2026</div>
+        </div>
+        <div class="card" style="padding: 32px 28px; display: flex; flex-direction: column; justify-content: center;">
+          <div class="card-icon card-icon--purple-subtle" style="margin-bottom: 18px; width: 48px; height: 48px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round"><path d="M12 2a8 8 0 018 8c0 6-8 12-8 12S4 16 4 10a8 8 0 018-8z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <p>Under stress, the brain shifts from planning and decision-making to habitual, emotional responses.</p>
+          <p style="margin-top: 8px;">Even mild uncontrollable stress causes rapid loss of prefrontal cortex function.</p>
+          <div class="stat-source" style="margin-top: 12px;">Arnsten, Nature Reviews Neuroscience, 2009</div>
+        </div>
+      </div>
+      <blockquote style="margin-top: 32px; max-width: 100%;">When the individual at the center is strained, the strain reaches every system they lead. This is the dimension no one is investing in.</blockquote>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 5b: THE STAFFING CONNECTION ==================== -->
+  <div class="slide" id="s5b">
+    <div class="slide-content">
+      <div class="slide-label">The Evidence</div>
+      <h2>The <strong>staffing connection</strong></h2>
+      <p class="lead" style="margin-top: 8px; margin-bottom: 20px;">How the owner shows up determines how the team shows up. The same human layer that shapes the owner's capacity also shapes whether people stay.</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="card" style="padding: 24px; border-left: 3px solid var(--blue); border-radius: 0 var(--radius) var(--radius) 0;">
+          <div style="font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--blue); margin-bottom: 10px;">The Manager Gap</div>
+          <p>Manager engagement dropped from <strong style="color: var(--white);">27% to 22%</strong> in a single year. Gallup attributes most of the broader engagement decline to managers. Best-practice organizations: <strong style="color: var(--white);">79%</strong> manager engagement.</p>
+          <div class="stat-source" style="margin-top: 10px;">Gallup, State of the Global Workplace, 2026</div>
+        </div>
+        <div class="card" style="padding: 24px; border-left: 3px solid var(--pink); border-radius: 0 var(--radius) var(--radius) 0;">
+          <div style="font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--pink); margin-bottom: 10px;">Best Small Workplaces</div>
+          <p><strong style="color: var(--white);">9 in 10</strong> employees at winning small workplaces want to stay long-term (vs ~2/3 at typical). <strong style="color: var(--white);">98%</strong> give extra effort (vs 60% at typical).</p>
+          <div class="stat-source" style="margin-top: 10px;">Great Place To Work / Fortune Best Small Workplaces, 2025</div>
+        </div>
+      </div>
+      <div class="callout-banner" style="margin-top: 20px;">
+        <p style="margin-bottom: 14px;">Gallup found that leaders account for <strong>70% of the variance</strong> in whether employees are engaged or checked out. Herzberg's research confirms <strong><em>what retains people isn't pay: it's recognition, meaning, autonomy, growth.</em></strong> Organizations ranked as best places to work outperform the stock market by <strong>over 3x</strong>. The five drivers every ranking system converges on:</p>
+        <div class="drivers-grid" style="margin-top: 14px; margin-bottom: 14px;">
+          <div class="driver-pill blue">Trustworthy leadership</div>
+          <div class="driver-pill purple">Fairness &amp; equity</div>
+          <div class="driver-pill teal">Respect &amp; care</div>
+          <div class="driver-pill pink">Belonging &amp; camaraderie</div>
+          <div class="driver-pill yellow">Pride, meaning, growth</div>
+        </div>
+        <p style="font-size: 12.5px;">Every one traces back to how the owner shows up. When we address the Owner System, we also begin to address the staffing challenge.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 6a: WHO WE ARE ==================== -->
+  <div class="slide" id="s6">
+    <div class="slide-content">
+      <div class="slide-label">Who We Are</div>
+      <h2>What we <strong>do</strong></h2>
+      <div class="card" style="padding: 22px 28px; margin-bottom: 26px;">
+        <p style="font-size: 17px; line-height: 1.65; color: var(--ink-2);">We build the human operating capacity that durable performance depends on,</p>
+        <p style="font-size: 17px; line-height: 1.65; color: var(--ink-2);">equipping individuals, teams, and organizations to grow through the forces that shape every workplace.</p>
+        <p style="font-size: 17px; line-height: 1.65; color: var(--ink-2); font-style: italic;">We design it in rather than leave it to chance.</p>
+      </div>
+      <h2 style="margin-top: 8px;">What we <strong>believe</strong></h2>
+      <div style="max-width: 900px;">
+        <ul class="beliefs">
+          <li><span class="belief-dot"></span><span><span class="belief-head">Human growth belongs at work.</span> A third of our lives is spent there.</span></li>
+          <li><span class="belief-dot"></span><span><span class="belief-head">Change starts inside the individual.</span> Each person is closer to the truth of what they need than anyone outside them.</span></li>
+          <li style="white-space: nowrap;"><span class="belief-dot"></span><span><span class="belief-head">The human operating layer is the foundation.</span> Strategy, tools, and process only perform as well as the humans running them under pressure.</span></li>
+          <li><span class="belief-dot"></span><span><span class="belief-head">Regulation before reframing. Reframing before action.</span> Solving from a distressed state produces fragile outcomes.</span></li>
+          <li><span class="belief-dot"></span><span><span class="belief-head">People are complex. Workplaces don't get to opt out of that.</span> We work with the full range of who people are.</span></li>
+          <li><span class="belief-dot"></span><span><span class="belief-head">Human operating capacity can be moved, deliberately.</span> This is the conviction at the center of everything we do.</span></li>
+          <li><span class="belief-dot"></span><span><span class="belief-head">Disruption is the opportunity, not the threat.</span> We help usher in a new workplace culture rather than patch the old one.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 6b: HOW WE WORK ==================== -->
+  <div class="slide" id="s6b">
+    <div class="slide-content">
+      <div class="slide-label">Who We Are</div>
+      <h2>How we <strong>work</strong></h2>
+      <div style="display: flex; gap: 40px; margin-top: 20px; align-items: flex-start;">
+        <div style="flex: 1;">
+          <h3 style="margin-bottom: 16px;">Our methodology</h3>
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="node node--reg">
+              <div class="node-label">Regulation</div>
+              <p style="font-size: 14px;">Body, nervous system, emotions, energy. We regulate and ground first.</p>
+            </div>
+            <div class="node node--ref">
+              <div class="node-label">Reframing</div>
+              <p style="font-size: 14px;">Personal narrative and outlook. From a regulated state, patterns become visible.</p>
+            </div>
+            <div class="node node--act">
+              <div class="node-label">Action</div>
+              <p style="font-size: 14px;">Intentional action and execution. Only from clarity can action sustain itself.</p>
+            </div>
+          </div>
+          <p style="font-size: 12px; color: var(--muted); margin-top: 12px;">We start with the individual and work through the layers: team, program, organization.</p>
+        </div>
+        <div style="flex: 1;">
+          <p style="font-size: 16px; line-height: 1.7; color: var(--slate); margin-bottom: 12px;">The principle that carries across every layer of a business:</p>
+          <div style="margin-bottom: 20px;">
+            <p style="font-size: 16px; line-height: 1.8; color: var(--ink); padding-left: 24px;"><strong>Individual Regulation</strong></p>
+            <p style="font-size: 16px; line-height: 1.8; color: var(--ink); padding-left: 56px;">before <strong>Team Application</strong></p>
+            <p style="font-size: 16px; line-height: 1.8; color: var(--ink); padding-left: 88px;">before <strong>Organizational Effectiveness</strong>.</p>
+          </div>
+          <p style="font-size: 16px; line-height: 1.7; color: var(--slate); margin-bottom: 20px;">This is the sequencing discipline that makes the methodology hold under real conditions.</p>
+          <div class="divider"></div>
+          <p style="font-size: 16px; line-height: 1.7; color: var(--slate); font-style: italic; margin-top: 16px;">This is <strong style="color: var(--white);">performance optimization</strong>, not wellness and not therapy.</p>
+        </div>
+      </div>
+      <div class="pos-card" style="margin-top: 24px; margin-bottom: 0;">
+        <p style="font-style: italic;">When people feel regulated, resilient, and aligned on how to show up for each other, performance follows.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 7: FOR THE INDIVIDUAL OWNER ==================== -->
+  <div class="slide" id="s7">
+    <div class="slide-content">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="slide-label">What This Means for the SBA</div>
+        <span class="section-badge section-badge--purple">For the Individual Owner</span>
+      </div>
+      <h2>See what's real. Act on <strong>what matters.</strong></h2>
+      <div class="three-col" style="margin-top: 16px;">
+        <div class="value-card" style="border-top: 3px solid var(--purple);">
+          <div class="card-icon card-icon--purple-subtle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3>See what's real</h3>
+          <p>Most owners operate on unexamined assumptions. Some are grounded in business reality. Others are driven by stress responses and limiting beliefs.</p>
+          <p style="margin-top: 0;">We help owners distinguish between what's actually happening and the story they're telling themselves.</p>
+        </div>
+        <div class="value-card" style="border-top: 3px solid var(--blue);">
+          <div class="card-icon card-icon--blue-subtle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <h3>Surface what matters</h3>
+          <p>The friction map sorts business pain points into what you can Control, Influence, Monitor, or Release.</p>
+          <p style="margin-top: 0;">Rooted in Stoic philosophy and cognitive behavioral therapy, we facilitate exercises that lead owners to clarity on where to focus.</p>
+        </div>
+        <div class="value-card" style="border-top: 3px solid var(--teal);">
+          <div class="card-icon card-icon--teal-subtle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <h3>See the patterns underneath</h3>
+          <p>A confidential intake surfaces shared themes anonymously. Pressure archetypes help owners recognize their default under stress: the Controller, the Firefighter, the Avoider, the Pleaser, the Perfectionist.</p>
+          <p style="margin-top: 0;">Additionally, the psychological contract audit surfaces unspoken expectations.</p>
+        </div>
+      </div>
+      <p class="footnote">Best Places to Work Differentiator: respect and care for the whole person + pride, meaning, and growth</p>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 8: FOR THE COMMUNITY ==================== -->
+  <div class="slide" id="s8">
+    <div class="slide-content">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="slide-label">What This Means for the SBA</div>
+        <span class="section-badge section-badge--teal">For the Community of Owners</span>
+      </div>
+      <h2>Deepen what's <strong>already working</strong></h2>
+      <div class="two-col" style="margin-top: 16px;">
+        <div class="card card--blue">
+          <div class="card-icon card-icon--white-subtle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <h3>Beyond networking</h3>
+          <p>The mix-and-mingles and perks already bring people together. We take that further with structured peer work: friction mapping together, cross-business advisory circles, shared Owner dimension exercises.</p>
+          <p style="margin-top: 0;">Trust and mutual support that goes beyond what networking alone can reach.</p>
+          <p style="margin-top: 0;">Owners discover problems aren't unique and leverage this reality into a business management advantage.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="value-card" style="border-left: 3px solid var(--pink); border-radius: 0 14px 14px 0;">
+            <h3 style="color: var(--pink);">Owner isolation is real</h3>
+            <p>In a town of 3,000, there's no built-in peer group for the weight owners carry.</p>
+          </div>
+          <div class="value-card" style="border-left: 3px solid var(--blue); border-radius: 0 14px 14px 0;">
+            <h3 style="color: var(--blue);">Reputation is the labor market</h3>
+            <p>When an owner leads better, word travels. When the SBA provides deep cross-business value, that reputation travels even further.</p>
+            <p style="margin-top: 0;">In Sisters, that's the most powerful recruiting tool available.</p>
+          </div>
+          <div class="value-card" style="border-left: 3px solid var(--teal); border-radius: 0 14px 14px 0;">
+            <h3>Belonging keeps people</h3>
+            <p>Seasonal workers have options. The differentiator isn't pay.</p>
+            <p style="margin-top: 0;">It's whether they feel part of something.</p>
+          </div>
+          <div class="card card--dark" style="padding: 16px 20px; text-align: center;">
+            <p style="font-size: 13.5px; font-style: italic; color: var(--white);">In a small town, the stakes are higher. These dynamics amplify everything.</p>
+          </div>
+        </div>
+      </div>
+      <p class="footnote">Best Places to Work Differentiator: belonging and camaraderie + fairness and equity</p>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 9: FOR THE SBA ==================== -->
+  <div class="slide" id="s9">
+    <div class="slide-content">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="slide-label">What This Means for the SBA</div>
+        <span class="section-badge section-badge--blue">For the SBA Organization</span>
+      </div>
+      <h2>Strengthen what <strong>you've built</strong></h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px;">
+        <div class="value-card" style="border-top: 3px solid var(--yellow);">
+          <div class="card-icon" style="background: var(--yellow-10); color: var(--yellow);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <h3>Sharpen the signal</h3>
+          <p>Our structured process surfaces patterns you might not hear in casual settings.</p>
+          <p style="margin-top: 0;">Aggregated, anonymous themes become data-backed signals for what programming the SBA delivers next.</p>
+        </div>
+        <div class="value-card" style="border-top: 3px solid var(--blue);">
+          <div class="card-icon card-icon--blue-subtle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <h3>Outsource human layer development</h3>
+          <p>We bring a specialized focus on the Owner System and human-layer side of member development, adding a dimension to SBA programming that deepens the value members receive.</p>
+        </div>
+        <div class="value-card" style="border-top: 3px solid var(--purple);">
+          <div class="card-icon card-icon--purple-subtle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <h3>Advance the founding mission</h3>
+          <p>The SBA was built because the Chamber fell short on real peer support.</p>
+          <p style="margin-top: 0;">We strengthen what makes the SBA different. Not a new direction. A deeper investment in the one you already chose.</p>
+        </div>
+        <div class="card card--dark" style="border-top: 3px solid var(--teal);">
+          <div class="card-icon" style="background: var(--teal-10); color: var(--teal);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <h3 style="color: var(--white);">Deepen the collective voice</h3>
+          <p style="color: var(--ink-2); font-size: 13.5px; line-height: 1.55;">The SBA already brings business owners together. We help strengthen those connections so members can advocate with more cohesion through city council, the Chamber, and community planning.</p>
+        </div>
+      </div>
+      <div class="callout-banner" style="margin-top: 16px; padding: 14px 24px; display: flex; align-items: center; gap: 16px;">
+        <div style="flex: 1;">
+          <p style="font-style: italic;">The Federal Reserve found that small-business support organizations are seeing rising demand while facing capacity constraints.</p>
+          <p style="font-style: italic; margin-top: 0;">They specifically noted the value of <strong>peer learning, convenings, and partnerships</strong>.</p>
+        </div>
+        <div style="font-size: 10px; color: var(--muted); font-family: var(--mono); flex-shrink: 0; max-width: 140px; text-align: right;">Federal Reserve Survey of Business Resource Organizations, 2025</div>
+      </div>
+      <p class="footnote">Best Places to Work Differentiator: trustworthy leadership</p>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 10: CLOSE + CTA ==================== -->
+  <div class="slide" id="s10">
+    <div class="slide-content" style="display: flex; flex-direction: row; align-items: center;">
+      <div style="flex: 0 0 420px; display: flex; flex-direction: column; gap: 12px;">
+        <div class="contact-cards" style="margin-top: 0;">
+          <div class="contact-card" style="background: var(--pink);">
+            <div class="contact-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            A presentation to your members
+          </div>
+          <div class="contact-card" style="background: var(--blue);">
+            <div class="contact-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            A pilot with willing owners
+          </div>
+          <div class="contact-card" style="background: var(--purple);">
+            <div class="contact-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+            </div>
+            SBA's Owner System partner
+          </div>
+          <div class="contact-card" style="background: var(--teal); color: var(--off-black);">
+            <div class="contact-icon" style="background: rgba(23,37,84,0.18);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#172554" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            Detailed proposal ready to share
+          </div>
+        </div>
+      </div>
+      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+        <h1 style="font-size: 60px; line-height: 1.1; margin-bottom: 24px; white-space: nowrap;">What's <strong>Next</strong></h1>
+        <div class="cta-line" style="text-align: center; max-width: 580px;">We exist to restore agency and build capacity in the people carrying the work, from the inside out.<br><br>For the SBA, that means the people carrying Sisters.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Navigation -->
+<div class="slide-counter"><span id="current">1</span> / <span id="total">13</span></div>
+<div class="nav">
+  <button onclick="navigate(-1)" aria-label="Previous slide">&#8592;</button>
+  <button onclick="navigate(1)" aria-label="Next slide">&#8594;</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  slides.forEach((s, i) => { if (i !== 0) s.classList.remove('active'); });
+
+  function showSlide(n) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(n, slides.length - 1));
+    slides[current].classList.add('active');
+    document.getElementById('current').textContent = current + 1;
+  }
+
+  function navigate(dir) { showSlide(current + dir); }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); navigate(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); navigate(-1); }
+    if (e.key === 'Home') { e.preventDefault(); showSlide(0); }
+    if (e.key === 'End') { e.preventDefault(); showSlide(slides.length - 1); }
+  });
+
+  var touchStartX = 0;
+  document.addEventListener('touchstart', function(e) { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', function(e) {
+    var diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) navigate(diff > 0 ? 1 : -1);
+  });
+</script>
+</body>
+</html>
