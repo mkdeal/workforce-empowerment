@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Missing Layer: Building Stronger from the Inside Out — Unified Direction</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
   :root {
     --ink: #f8fbff;
@@ -33,7 +33,7 @@
     --shadow-soft: 0 14px 36px rgba(0,0,0,0.26);
     --radius: 16px;
     --display: Georgia, "Times New Roman", serif;
-    --sans: "Inter", "Avenir Next", Avenir, Aptos, "Helvetica Neue", Arial, sans-serif;
+    --sans: "Montserrat", "Avenir Next", Avenir, Aptos, "Helvetica Neue", Arial, sans-serif;
     --mono: "SFMono-Regular", "SF Mono", "Roboto Mono", "Cascadia Mono", Consolas, monospace;
   }
 
@@ -102,7 +102,7 @@
      Semibold (not black) with generous tracking keeps all-caps readable at small sizes. */
   .slide-label, .mini-label, .node-label, .section-badge, .kicker {
     font-family: var(--sans);
-    font-weight: 600;
+    font-weight: 500;
   }
 
   .slide-label {
@@ -139,22 +139,23 @@
   h3 {
     font-family: var(--sans);
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.8px;
     color: var(--ink);
     margin-bottom: 8px;
   }
 
   p, li {
     font-size: 16.5px;
-    line-height: 1.4;
+    line-height: 1.5;
     font-weight: 400;
+    letter-spacing: 0.15px;
     color: var(--ink-2);
   }
 
-  /* Inline emphasis: semibold + a touch of tracking reads cleaner than default browser bold at this size */
-  strong { font-weight: 600; letter-spacing: 0.1px; }
+  /* Inline emphasis: medium weight + a touch of tracking reads cleaner than heavy bold at this size */
+  strong { font-weight: 600; letter-spacing: 0.2px; }
 
   .lead {
     font-size: 17px;
@@ -254,7 +255,7 @@
   .node--reg { background: linear-gradient(155deg, var(--teal), #1fb8a8); color: var(--off-black); }
   .node--ref { background: linear-gradient(155deg, var(--purple), #7a4ee0); color: var(--white); }
   .node--act { background: linear-gradient(155deg, var(--blue), #2f6fe0); color: var(--white); }
-  .node-label { font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 6px; opacity: 0.85; }
+  .node-label { font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; opacity: 0.85; }
   .node p { font-size: 13px; line-height: 1.5; opacity: 0.9; }
   .node--reg p, .node--reg .node-label { color: var(--off-black); }
   .node--ref p, .node--act p { color: var(--white); }
@@ -308,7 +309,7 @@
 
   .section-badge {
     display: inline-block;
-    font-size: 10.5px; font-weight: 600; letter-spacing: 2.4px; text-transform: uppercase;
+    font-size: 10.5px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
     padding: 5px 14px; border-radius: 8px; margin-bottom: 14px;
   }
   .section-badge--purple { background: var(--purple-10); color: var(--purple); filter: brightness(1.4); }
@@ -426,7 +427,7 @@
           </div>
           <div class="type-sample" style="margin-top: 10px;">
             <div class="label">Body</div>
-            <p style="font-family: var(--sans); font-size: 15px;">Inter (closest free match to Forma's Labil Grotesk body face), Avenir Next fallback</p>
+            <p style="font-family: var(--sans); font-size: 15px;">Montserrat — used for kickers, callout headers, and body copy for cleaner spacing at small sizes</p>
           </div>
           <div class="type-sample" style="margin-top: 10px;">
             <div class="label">Utility</div>
