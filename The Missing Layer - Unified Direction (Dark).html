@@ -98,15 +98,16 @@
     font-family: var(--mono);
   }
 
-  /* Kickers: bold uppercase sans, matching Ayni's .eyebrow / .label treatment */
+  /* Kickers: uppercase sans, matching Ayni's .eyebrow / .label treatment.
+     Semibold (not black) with generous tracking keeps all-caps readable at small sizes. */
   .slide-label, .mini-label, .node-label, .section-badge, .kicker {
     font-family: var(--sans);
-    font-weight: 900;
+    font-weight: 600;
   }
 
   .slide-label {
     font-size: 12px;
-    letter-spacing: 2.2px;
+    letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--teal);
     margin-bottom: 10px;
@@ -151,6 +152,9 @@
     font-weight: 400;
     color: var(--ink-2);
   }
+
+  /* Inline emphasis: semibold + a touch of tracking reads cleaner than default browser bold at this size */
+  strong { font-weight: 600; letter-spacing: 0.1px; }
 
   .lead {
     font-size: 17px;
@@ -243,14 +247,14 @@
   }
   .beliefs li:last-child { border-bottom: none; }
   .belief-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--pink); flex-shrink: 0; margin-top: 7px; }
-  .belief-head { font-weight: 700; color: var(--ink); }
+  .belief-head { font-weight: 600; letter-spacing: 0.1px; color: var(--ink); }
 
   .method-nodes { display: flex; gap: 14px; margin-top: 14px; }
   .node { flex: 1; padding: 18px; border-radius: 14px; box-shadow: var(--shadow-soft); }
   .node--reg { background: linear-gradient(155deg, var(--teal), #1fb8a8); color: var(--off-black); }
   .node--ref { background: linear-gradient(155deg, var(--purple), #7a4ee0); color: var(--white); }
   .node--act { background: linear-gradient(155deg, var(--blue), #2f6fe0); color: var(--white); }
-  .node-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; opacity: 0.85; }
+  .node-label { font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 6px; opacity: 0.85; }
   .node p { font-size: 13px; line-height: 1.5; opacity: 0.9; }
   .node--reg p, .node--reg .node-label { color: var(--off-black); }
   .node--ref p, .node--act p { color: var(--white); }
@@ -304,7 +308,7 @@
 
   .section-badge {
     display: inline-block;
-    font-size: 10.5px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase;
+    font-size: 10.5px; font-weight: 600; letter-spacing: 2.4px; text-transform: uppercase;
     padding: 5px 14px; border-radius: 8px; margin-bottom: 14px;
   }
   .section-badge--purple { background: var(--purple-10); color: var(--purple); filter: brightness(1.4); }
