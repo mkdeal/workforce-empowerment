@@ -93,14 +93,19 @@
 
   .slide-content { position: relative; z-index: 2; align-self: center; width: 100%; }
 
-  /* Slide labels / utility text: mono stack for labels, sources, annotations */
-  .slide-label, .stat-source, .footnote, .quote-context, .mini-label, .node-label, .section-badge, .kicker {
+  /* Source citations / footnotes: mono stack, per original utility-font spec */
+  .stat-source, .footnote, .quote-context {
     font-family: var(--mono);
+  }
+
+  /* Kickers: bold uppercase sans, matching Ayni's .eyebrow / .label treatment */
+  .slide-label, .mini-label, .node-label, .section-badge, .kicker {
+    font-family: var(--sans);
+    font-weight: 900;
   }
 
   .slide-label {
     font-size: 12px;
-    font-weight: 600;
     letter-spacing: 2.2px;
     text-transform: uppercase;
     color: var(--teal);
@@ -131,18 +136,20 @@
   h2 strong { font-weight: 700; color: var(--white); }
 
   h3 {
-    font-family: var(--display);
-    font-size: 16px;
+    font-family: var(--sans);
+    font-size: 15px;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
     color: var(--ink);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   p, li {
-    font-size: 15.5px;
-    line-height: 1.6;
+    font-size: 16.5px;
+    line-height: 1.4;
     font-weight: 400;
-    color: var(--slate);
+    color: var(--ink-2);
   }
 
   .lead {
@@ -228,9 +235,9 @@
   .beliefs { list-style: none; }
   .beliefs li {
     padding: 7px 0;
-    font-size: 13.5px;
-    line-height: 1.5;
-    color: var(--slate);
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: var(--ink-2);
     border-bottom: 1px solid var(--line);
     display: flex; align-items: flex-start; gap: 10px;
   }
@@ -256,8 +263,8 @@
     box-shadow: var(--shadow-soft);
     backdrop-filter: blur(14px);
   }
-  .value-card h3 { font-size: 15px; margin-bottom: 6px; }
-  .value-card p { font-size: 13.5px; line-height: 1.55; color: var(--slate); }
+  .value-card h3 { font-size: 14px; margin-bottom: 8px; }
+  .value-card p { font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
 
   .drivers-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
   .driver-pill {
@@ -419,7 +426,7 @@
           </div>
           <div class="type-sample" style="margin-top: 10px;">
             <div class="label">Utility</div>
-            <p style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.5px;">SF Mono stack — labels, sources, annotations</p>
+            <p style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.5px;">SF Mono stack — sources &amp; footnotes only; kickers use bold sans</p>
           </div>
         </div>
         <div class="style-token">
