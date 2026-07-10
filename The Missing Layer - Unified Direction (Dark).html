@@ -34,7 +34,7 @@
     --radius: 16px;
     --display: Georgia, "Times New Roman", serif;
     --sans: "Montserrat", "Avenir Next", Avenir, Aptos, "Helvetica Neue", Arial, sans-serif;
-    --mono: "SFMono-Regular", "SF Mono", "Roboto Mono", "Cascadia Mono", Consolas, monospace;
+    --mono: "Montserrat", "Avenir Next", Avenir, Aptos, "Helvetica Neue", Arial, sans-serif;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -93,16 +93,20 @@
 
   .slide-content { position: relative; z-index: 2; align-self: center; width: 100%; }
 
-  /* Source citations / footnotes: mono stack, per original utility-font spec */
+  /* Source citations / footnotes: utility register — Montserrat, light weight, uppercase, wide tracking.
+     Kept visually distinct from body copy even though it shares the same family as everything else. */
   .stat-source, .footnote, .quote-context {
     font-family: var(--mono);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
   }
 
   /* Kickers: uppercase sans, matching Ayni's .eyebrow / .label treatment.
      Semibold (not black) with generous tracking keeps all-caps readable at small sizes. */
   .slide-label, .mini-label, .node-label, .section-badge, .kicker {
     font-family: var(--sans);
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .slide-label {
@@ -255,7 +259,7 @@
   .node--reg { background: linear-gradient(155deg, var(--teal), #1fb8a8); color: var(--off-black); }
   .node--ref { background: linear-gradient(155deg, var(--purple), #7a4ee0); color: var(--white); }
   .node--act { background: linear-gradient(155deg, var(--blue), #2f6fe0); color: var(--white); }
-  .node-label { font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; opacity: 0.85; }
+  .node-label { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; opacity: 0.85; }
   .node p { font-size: 13px; line-height: 1.5; opacity: 0.9; }
   .node--reg p, .node--reg .node-label { color: var(--off-black); }
   .node--ref p, .node--act p { color: var(--white); }
@@ -286,7 +290,7 @@
 
   .divider { width: 46px; height: 3px; background: var(--pink); border-radius: 2px; margin: 16px 0; }
 
-  .footnote { font-size: 11.5px; color: var(--muted); margin-top: 16px; letter-spacing: 0.3px; }
+  .footnote { font-size: 11.5px; color: var(--muted); margin-top: 16px; }
 
   .cta-line {
     font-size: 21px; font-weight: 400; font-style: italic; line-height: 1.55;
@@ -309,7 +313,7 @@
 
   .section-badge {
     display: inline-block;
-    font-size: 10.5px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+    font-size: 10.5px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
     padding: 5px 14px; border-radius: 8px; margin-bottom: 14px;
   }
   .section-badge--purple { background: var(--purple-10); color: var(--purple); filter: brightness(1.4); }
@@ -422,16 +426,20 @@
         <div class="style-token">
           <h3>Fonts</h3>
           <div class="type-sample">
-            <div class="label">Headers</div>
-            <p style="font-family: var(--display); font-size: 20px; font-weight: 700; color: var(--white);">Georgia / Times New Roman (from Ayni's "Reciprocal Systems Design" style statement)</p>
+            <div class="label">Headlines (h1 / h2)</div>
+            <p style="font-family: var(--display); font-size: 20px; font-weight: 700; color: var(--white);">Georgia / Times New Roman — from Ayni's "Reciprocal Systems Design" style statement</p>
           </div>
           <div class="type-sample" style="margin-top: 10px;">
-            <div class="label">Body</div>
-            <p style="font-family: var(--sans); font-size: 15px;">Montserrat — used for kickers, callout headers, and body copy for cleaner spacing at small sizes</p>
+            <div class="label">Kickers &amp; callout headers</div>
+            <p style="font-family: var(--sans); font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;">MONTSERRAT SEMIBOLD, UPPERCASE</p>
           </div>
           <div class="type-sample" style="margin-top: 10px;">
-            <div class="label">Utility</div>
-            <p style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.5px;">SF Mono stack — sources &amp; footnotes only; kickers use bold sans</p>
+            <div class="label">Body copy</div>
+            <p style="font-family: var(--sans); font-size: 15px; font-weight: 400;">Montserrat Regular — paragraphs, bullets, quotes</p>
+          </div>
+          <div class="type-sample" style="margin-top: 10px;">
+            <div class="label">Utility (sources &amp; footnotes)</div>
+            <p style="font-family: var(--mono); font-size: 12px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted);">MONTSERRAT, SMALL &amp; UPPERCASE FOR CONTRAST</p>
           </div>
         </div>
         <div class="style-token">
@@ -571,17 +579,17 @@
           <div style="flex: 1; background: rgba(248,251,255,0.06); border-radius: 10px; padding: 12px 14px; text-align: center;">
             <div style="font-size: 24px; font-weight: 800; color: var(--yellow); font-family: var(--display);">77%</div>
             <div style="font-size: 11px; color: var(--ink-2); line-height: 1.3; margin-top: 2px;">rising-cost or tariff challenges</div>
-            <div style="font-size: 9px; color: var(--muted); margin-top: 4px; font-family: var(--mono);">Federal Reserve 2026</div>
+            <div style="font-size: 9px; color: var(--muted); margin-top: 4px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.8px;">Federal Reserve 2026</div>
           </div>
           <div style="flex: 1; background: rgba(248,251,255,0.06); border-radius: 10px; padding: 12px 14px; text-align: center;">
             <div style="font-size: 24px; font-weight: 800; color: var(--yellow); font-family: var(--display);">16→26%</div>
             <div style="font-size: 11px; color: var(--ink-2); line-height: 1.3; margin-top: 2px;">talent concern in one year</div>
-            <div style="font-size: 9px; color: var(--muted); margin-top: 4px; font-family: var(--mono);">U.S. Chamber Q4 2025</div>
+            <div style="font-size: 9px; color: var(--muted); margin-top: 4px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.8px;">U.S. Chamber Q4 2025</div>
           </div>
           <div style="flex: 1; background: rgba(248,251,255,0.06); border-radius: 10px; padding: 12px 14px; text-align: center;">
             <div style="font-size: 22px; font-weight: 800; color: var(--yellow); font-family: var(--display);">Lowest</div>
             <div style="font-size: 11px; color: var(--ink-2); line-height: 1.3; margin-top: 2px;">revenue expectations since 2020</div>
-            <div style="font-size: 9px; color: var(--muted); margin-top: 4px; font-family: var(--mono);">Federal Reserve 2026</div>
+            <div style="font-size: 9px; color: var(--muted); margin-top: 4px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.8px;">Federal Reserve 2026</div>
           </div>
         </div>
       </div>
@@ -718,7 +726,7 @@
             <text x="80" y="78" text-anchor="middle" fill="white" font-size="32" font-weight="800">53%</text>
           </svg>
           <div style="font-size: 15px; color: var(--white); opacity: 0.9; line-height: 1.45;">emotionally drained<br>or burned out</div>
-          <div style="font-size: 11px; color: var(--white); opacity: 0.65; margin-top: 10px; font-family: var(--mono);">Bluevine / Centiment, 2026</div>
+          <div style="font-size: 11px; color: var(--white); opacity: 0.65; margin-top: 10px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.8px;">Bluevine / Centiment, 2026</div>
         </div>
         <div class="card card--blue" style="text-align: center; padding: 36px 24px;">
           <svg viewBox="0 0 160 100" width="180" style="margin: 0 auto 16px;">
@@ -727,7 +735,7 @@
             <text x="80" y="78" text-anchor="middle" fill="white" font-size="32" font-weight="800">68%</text>
           </svg>
           <div style="font-size: 15px; color: var(--white); opacity: 0.9; line-height: 1.45;">delayed or avoided a<br>major business decision</div>
-          <div style="font-size: 11px; color: var(--white); opacity: 0.65; margin-top: 10px; font-family: var(--mono);">Bluevine / Centiment, 2026</div>
+          <div style="font-size: 11px; color: var(--white); opacity: 0.65; margin-top: 10px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.8px;">Bluevine / Centiment, 2026</div>
         </div>
         <div class="card" style="padding: 32px 28px; display: flex; flex-direction: column; justify-content: center;">
           <div class="card-icon card-icon--purple-subtle" style="margin-bottom: 18px; width: 48px; height: 48px;">
@@ -750,12 +758,12 @@
       <p class="lead" style="margin-top: 8px; margin-bottom: 20px;">How the owner shows up determines how the team shows up. The same human layer that shapes the owner's capacity also shapes whether people stay.</p>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <div class="card" style="padding: 24px; border-left: 3px solid var(--blue); border-radius: 0 var(--radius) var(--radius) 0;">
-          <div style="font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--blue); margin-bottom: 10px;">The Manager Gap</div>
+          <div style="font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--blue); margin-bottom: 10px;">The Manager Gap</div>
           <p>Manager engagement dropped from <strong style="color: var(--white);">27% to 22%</strong> in a single year. Gallup attributes most of the broader engagement decline to managers. Best-practice organizations: <strong style="color: var(--white);">79%</strong> manager engagement.</p>
           <div class="stat-source" style="margin-top: 10px;">Gallup, State of the Global Workplace, 2026</div>
         </div>
         <div class="card" style="padding: 24px; border-left: 3px solid var(--pink); border-radius: 0 var(--radius) var(--radius) 0;">
-          <div style="font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--pink); margin-bottom: 10px;">Best Small Workplaces</div>
+          <div style="font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--pink); margin-bottom: 10px;">Best Small Workplaces</div>
           <p><strong style="color: var(--white);">9 in 10</strong> employees at winning small workplaces want to stay long-term (vs ~2/3 at typical). <strong style="color: var(--white);">98%</strong> give extra effort (vs 60% at typical).</p>
           <div class="stat-source" style="margin-top: 10px;">Great Place To Work / Fortune Best Small Workplaces, 2025</div>
         </div>
@@ -966,7 +974,7 @@
           <p style="font-style: italic;">The Federal Reserve found that small-business support organizations are seeing rising demand while facing capacity constraints.</p>
           <p style="font-style: italic; margin-top: 0;">They specifically noted the value of <strong>peer learning, convenings, and partnerships</strong>.</p>
         </div>
-        <div style="font-size: 10px; color: var(--muted); font-family: var(--mono); flex-shrink: 0; max-width: 140px; text-align: right;">Federal Reserve Survey of Business Resource Organizations, 2025</div>
+        <div style="font-size: 10px; color: var(--muted); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.8px; flex-shrink: 0; max-width: 140px; text-align: right;">Federal Reserve Survey of Business Resource Organizations, 2025</div>
       </div>
       <p class="footnote">Best Places to Work Differentiator: trustworthy leadership</p>
     </div>
