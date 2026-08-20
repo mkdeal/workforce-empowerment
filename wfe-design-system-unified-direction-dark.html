@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WFE Design System — Unified Direction (Dark)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+  :root {
+    --ink: #f8fbff;
+    --ink-2: #e5ecff;
+    --slate: #c9d4f5;
+    --muted: #94a3c7;
+    --line: rgba(248, 251, 255, 0.14);
+    --off-black: #172554;
+    --paper: #0b1440;
+    --cloud: #172554;
+    --white: #f8fbff;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+    --teal: #2dd4bf;
+    --yellow: #facc15;
+    --pink: #ec4899;
+    --blue-10: rgba(59,130,246,0.14);
+    --purple-10: rgba(139,92,246,0.14);
+    --teal-10: rgba(45,212,191,0.14);
+    --yellow-10: rgba(250,204,21,0.14);
+    --pink-10: rgba(236,72,153,0.14);
+    --glass: rgba(23, 37, 84, 0.72);
+    --glass-strong: rgba(15, 23, 61, 0.9);
+    --shadow: 0 20px 58px rgba(0,0,0,0.34), 0 8px 22px rgba(0,0,0,0.22);
+    --shadow-soft: 0 14px 36px rgba(0,0,0,0.26);
+    --radius: 16px;
+    --display: Georgia, "Times New Roman", serif;
+    --sans: "Montserrat", "Avenir Next", Avenir, Aptos, "Helvetica Neue", Arial, sans-serif;
+    --mono: "Montserrat", "Avenir Next", Avenir, Aptos, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--off-black);
+  }
+
+  .deck { width: 100vw; height: 100vh; position: relative; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    padding: 52px 68px;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 14% 12%, rgba(45,212,191,0.14), transparent 32%),
+      radial-gradient(circle at 88% 10%, rgba(139,92,246,0.16), transparent 34%),
+      radial-gradient(circle at 60% 92%, rgba(236,72,153,0.10), transparent 34%),
+      linear-gradient(150deg, #0b1440 0%, #172554 55%, #1c2d63 100%);
+    opacity: 0;
+    transition: opacity 0.42s ease;
+  }
+
+  .slide.active { display: flex; opacity: 1; }
+
+  .slide::after {
+    content: "";
+    position: absolute;
+    right: 0; top: 0;
+    width: 34vw; height: 16px;
+    background: linear-gradient(90deg, rgba(45,212,191,0), rgba(45,212,191,0.85), rgba(59,130,246,0.9), rgba(139,92,246,0.85), rgba(236,72,153,0.75));
+    border-radius: 0 0 0 999px;
+    filter: saturate(1.05);
+    pointer-events: none;
+  }
+
+  .slide-content { position: relative; z-index: 2; align-self: center; width: 100%; }
+
+  .stat-source, .footnote, .quote-context {
+    font-family: var(--mono);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .slide-label, .mini-label, .node-label, .section-badge, .kicker {
+    font-family: var(--sans);
+    font-weight: 600;
+  }
+
+  .slide-label {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: 54px;
+    font-weight: 400;
+    line-height: 1.08;
+    color: var(--ink);
+    margin-bottom: 18px;
+    letter-spacing: 0;
+  }
+  h1 strong { font-weight: 700; }
+  h1 em { font-style: italic; color: var(--pink); font-weight: 400; }
+
+  h2 {
+    font-family: var(--display);
+    font-size: 40px;
+    font-weight: 400;
+    line-height: 1.16;
+    color: var(--ink);
+    margin-bottom: 14px;
+    letter-spacing: 0;
+  }
+  h2 strong { font-weight: 700; color: var(--white); }
+
+  h3 {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  p, li {
+    font-size: 16.5px;
+    line-height: 1.5;
+    font-weight: 400;
+    letter-spacing: 0.15px;
+    color: var(--ink-2);
+  }
+
+  strong { font-weight: 600; letter-spacing: 0.2px; }
+
+  .lead {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--slate);
+    max-width: 780px;
+  }
+
+  .subtitle { font-size: 18px; color: var(--muted); max-width: 480px; }
+
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(14px);
+  }
+
+  .card--blue { background: linear-gradient(155deg, var(--blue), #2f6fe0); color: var(--white); border: none; }
+  .card--blue h3, .card--blue p, .card--blue .stat-desc { color: var(--white); }
+  .card--blue .stat-desc { opacity: 0.85; }
+
+  .card--purple { background: linear-gradient(155deg, var(--purple), #7a4ee0); color: var(--white); border: none; }
+  .card--purple h3, .card--purple p { color: var(--white); }
+
+  .card--dark { background: var(--glass-strong); color: var(--white); border: 1px solid var(--line); }
+  .card--dark h3, .card--dark p, .card--dark li { color: var(--white); }
+  .card--dark .stat-desc, .card--dark p { opacity: 0.85; }
+
+  .stat-source { font-size: 11px; color: var(--muted); margin-top: 4px; font-weight: 400; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+  .card-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .card-icon--blue-subtle { background: var(--blue-10); color: var(--blue); }
+  .card-icon--purple-subtle { background: var(--purple-10); color: var(--purple); }
+  .card-icon--teal-subtle { background: var(--teal-10); color: var(--teal); }
+  .card-icon--white-subtle { background: rgba(248,251,255,0.16); color: var(--white); }
+
+  blockquote {
+    padding: 16px 0 16px 20px;
+    border-left: 3px solid var(--pink);
+    font-size: 16px;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 700px;
+  }
+
+  .quote-card {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 12px;
+    border-left: 3px solid var(--pink);
+    backdrop-filter: blur(14px);
+  }
+  .quote-text { font-style: italic; font-size: 15px; line-height: 1.5; color: var(--pink); opacity: 0.92; margin-bottom: 4px; filter: brightness(1.35); }
+  .quote-context { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+
+  .data-card {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow-soft);
+    border-top: 3px solid var(--teal);
+    backdrop-filter: blur(14px);
+  }
+
+  .drivers-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .driver-pill {
+    padding: 8px 14px; border-radius: 10px;
+    font-size: 12px; font-weight: 600; text-align: center;
+    flex: 1; min-width: 120px;
+    color: var(--off-black);
+  }
+  .driver-pill.blue { background: var(--blue); color: var(--white); }
+  .driver-pill.purple { background: var(--purple); color: var(--white); }
+  .driver-pill.teal { background: var(--teal); }
+  .driver-pill.pink { background: var(--pink); color: var(--white); }
+  .driver-pill.yellow { background: var(--yellow); }
+
+  .divider { width: 46px; height: 3px; background: var(--pink); border-radius: 2px; margin: 16px 0; }
+
+  .footnote { font-size: 11.5px; color: var(--muted); margin-top: 16px; }
+
+  .cta-line {
+    font-size: 21px; font-weight: 400; font-style: italic; line-height: 1.55;
+    color: var(--pink); max-width: 600px; margin-top: 24px;
+    filter: brightness(1.3);
+  }
+
+  .section-badge {
+    display: inline-block;
+    font-size: 10.5px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 8px; margin-bottom: 14px;
+  }
+  .section-badge--purple { background: var(--purple-10); color: var(--purple); filter: brightness(1.4); }
+  .section-badge--teal { background: var(--teal-10); color: var(--teal); }
+  .section-badge--blue { background: var(--blue-10); color: var(--blue); filter: brightness(1.5); }
+
+  .callout-banner {
+    background: var(--glass-strong);
+    border: 1px solid var(--line);
+    color: var(--white);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-top: 16px;
+  }
+  .callout-banner .bridge-label {
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--yellow); margin-bottom: 8px;
+  }
+  .callout-banner p { font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
+  .callout-banner strong { color: var(--white); }
+
+  .hero-cards {
+    position: absolute; right: 60px; top: 50%; transform: translateY(-50%); z-index: 2;
+    display: flex; flex-direction: column; gap: 16px; width: 340px;
+  }
+  .hero-mini-card {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 22px;
+    box-shadow: var(--shadow);
+    display: flex; align-items: center; gap: 16px;
+    backdrop-filter: blur(14px);
+  }
+  .hero-mini-card .mini-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .hero-mini-card .mini-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+  .hero-mini-card .mini-value { font-size: 19px; font-weight: 700; color: var(--white); font-family: var(--display); }
+
+  .swatches { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 10px; }
+  .swatch { height: 54px; border-radius: 8px; border: 1px solid var(--line); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; }
+  .swatch span { font-family: var(--mono); font-size: 9px; opacity: 0.85; }
+  .style-token {
+    padding: 20px 22px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+  }
+  .type-sample { padding: 4px 0; }
+  .type-sample .label { font-family: var(--mono); font-size: 10.5px; color: var(--teal); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+
+  .nav { position: fixed; bottom: 24px; right: 30px; display: flex; gap: 8px; z-index: 100; }
+  .nav button {
+    background: rgba(248,251,255,0.08);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    width: 40px; height: 40px; border-radius: 10px;
+    cursor: pointer; font-size: 16px;
+    transition: background 0.2s;
+  }
+  .nav button:hover { background: rgba(248,251,255,0.16); }
+
+  .slide-counter {
+    position: fixed; bottom: 30px; left: 30px;
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 500; color: var(--muted); z-index: 100;
+  }
+
+  svg text { font-family: var(--sans); }
+
+  @media print {
+    body { overflow: visible; height: auto; width: auto; background: var(--off-black); }
+    .deck { width: auto; height: auto; position: static; }
+    .slide {
+      display: flex !important; opacity: 1 !important; position: relative !important;
+      width: 100% !important; height: 100vh !important;
+      page-break-after: always; break-after: page;
+      page-break-inside: avoid; break-inside: avoid;
+    }
+    .slide:last-of-type { page-break-after: avoid; }
+    .nav, .slide-counter { display: none !important; }
+    .slide, .card, .quote-card, .callout-banner, [style*="background"] {
+      print-color-adjust: exact; -webkit-print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- ==================== SLIDE 0: VISUAL SYSTEM ==================== -->
+  <div class="slide active" id="s0">
+    <div class="slide-content">
+      <div class="slide-label">WFE Design System</div>
+      <h2>Unified <strong>color, type &amp; texture</strong> direction — Dark</h2>
+      <div class="two-col" style="margin-top: 20px;">
+        <div class="style-token">
+          <h3>Fonts</h3>
+          <div class="type-sample">
+            <div class="label">Headlines (h1 / h2)</div>
+            <p style="font-family: var(--display); font-size: 20px; font-weight: 700; color: var(--white);">Georgia / Times New Roman serif — titles and section headers</p>
+          </div>
+          <div class="type-sample" style="margin-top: 10px;">
+            <div class="label">Kickers &amp; callout headers</div>
+            <p style="font-family: var(--sans); font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;">MONTSERRAT SEMIBOLD, UPPERCASE</p>
+          </div>
+          <div class="type-sample" style="margin-top: 10px;">
+            <div class="label">Body copy</div>
+            <p style="font-family: var(--sans); font-size: 15px; font-weight: 400;">Montserrat Regular — paragraphs, bullets, quotes</p>
+          </div>
+          <div class="type-sample" style="margin-top: 10px;">
+            <div class="label">Utility (sources &amp; footnotes)</div>
+            <p style="font-family: var(--mono); font-size: 12px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted);">MONTSERRAT, SMALL &amp; UPPERCASE FOR CONTRAST</p>
+          </div>
+        </div>
+        <div class="style-token">
+          <h3>Color Palette</h3>
+          <p style="margin-bottom: 6px;">Off-black base, white ink, five accent colors.</p>
+          <div class="swatches">
+            <div class="swatch" style="background:#172554;"><span style="color:#f8fbff;">off-black</span></div>
+            <div class="swatch" style="background:#f8fbff;"><span style="color:#172554;">white</span></div>
+            <div class="swatch" style="background:#3b82f6;"><span style="color:#f8fbff;">blue</span></div>
+            <div class="swatch" style="background:#8b5cf6;"><span style="color:#f8fbff;">purple</span></div>
+            <div class="swatch" style="background:#2dd4bf;"><span style="color:#172554;">teal</span></div>
+            <div class="swatch" style="background:#facc15;"><span style="color:#172554;">yellow</span></div>
+            <div class="swatch" style="background:#ec4899;"><span style="color:#f8fbff;">pink</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="callout-banner" style="margin-top: 16px;">
+        <div class="bridge-label">Color usage convention</div>
+        <p><strong style="color: var(--blue);">Blue</strong> = the Business/Operating System side · <strong style="color: var(--purple);">Purple</strong> = the Owner/Human System side · <strong style="color: var(--teal);">Teal</strong> = evidence &amp; calm · <strong style="color: var(--yellow);">Yellow</strong> = attention &amp; highlight · <strong style="color: var(--pink);">Pink</strong> = voice, warmth &amp; the call to action.</p>
+      </div>
+      <div class="footnote">Note: earlier builds of this system used a faint dot-and-curve background texture on every slide. That texture was dropped (Aug 2026) — do not reintroduce it.</div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 1: TITLE LAYOUT ==================== -->
+  <div class="slide" id="s1">
+    <div class="slide-content" style="display: flex; align-items: center;">
+      <div style="max-width: 550px;">
+        <div class="slide-label">Section / Venture Label</div>
+        <h1>Deck Title:<br><em>Subtitle Line<br>in Italic Pink</em></h1>
+        <div class="divider"></div>
+        <p class="subtitle" style="white-space: nowrap;">One-line description of the audience or purpose</p>
+        <p style="font-size: 18px; font-weight: 400; font-style: italic; color: var(--muted); margin-top: 6px;">2026</p>
+      </div>
+      <div class="hero-cards">
+        <div class="hero-mini-card">
+          <div class="mini-icon" style="background: var(--purple-10);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div>
+            <div class="mini-label">Mini-card Label</div>
+            <div class="mini-value">Mini-card Value</div>
+          </div>
+        </div>
+        <div class="hero-mini-card">
+          <div class="mini-icon" style="background: var(--blue-10);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div>
+            <div class="mini-label">Mini-card Label</div>
+            <div class="mini-value">Mini-card Value</div>
+          </div>
+        </div>
+        <div class="hero-mini-card">
+          <div class="mini-icon" style="background: var(--teal-10);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <div class="mini-label">Mini-card Label</div>
+            <div class="mini-value">Mini-card Value</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 2: TWO-COL CONTENT + QUOTE CARDS ==================== -->
+  <div class="slide" id="s2">
+    <div class="slide-content">
+      <div class="slide-label">Section Label</div>
+      <h2>Section <strong>headline</strong> pattern</h2>
+      <div class="two-col" style="margin-top: 12px;">
+        <div>
+          <div class="data-card">
+            <h3 style="margin-bottom: 16px;">Data Card Title</h3>
+            <p>Data cards carry a teal top border and sit on the glass surface. Good for summarizing a metric block or a mini-chart.</p>
+            <div style="display: flex; gap: 12px; margin-top: 12px;">
+              <div style="flex:1; padding: 10px 14px; background: rgba(248,251,255,0.06); border-radius: 10px;">
+                <div style="font-size: 22px; font-weight: 800; color: var(--white); font-family: var(--display);">123</div>
+                <div style="font-size: 11px; color: var(--muted);">Metric label</div>
+              </div>
+              <div style="flex:1; padding: 10px 14px; background: rgba(248,251,255,0.06); border-radius: 10px;">
+                <div style="font-size: 22px; font-weight: 800; color: var(--white); font-family: var(--display);">45%</div>
+                <div style="font-size: 11px; color: var(--muted);">Metric label</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="quote-card">
+            <div class="quote-text">"A pulled-quote reads in italic pink, left-bordered."</div>
+            <div class="quote-context">Attribution or context line goes here.</div>
+          </div>
+          <div class="quote-card">
+            <div class="quote-text">"Quote cards stack for a testimonial or verbatim column."</div>
+            <div class="quote-context">Attribution or context line goes here.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 3: STAT / GAUGE CARD ROW ==================== -->
+  <div class="slide" id="s3">
+    <div class="slide-content">
+      <div class="slide-label">Section Label</div>
+      <h2>Stat &amp; <strong>gauge card</strong> pattern</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; margin-top: 20px;">
+        <div class="card card--purple" style="text-align: center; padding: 36px 24px;">
+          <svg viewBox="0 0 160 100" width="180" style="margin: 0 auto 16px;">
+            <path d="M20 85 A60 60 0 0 1 140 85" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="12" stroke-linecap="round"/>
+            <path d="M20 85 A60 60 0 0 1 95.6 30" fill="none" stroke="white" stroke-width="12" stroke-linecap="round"/>
+            <text x="80" y="78" text-anchor="middle" fill="white" font-size="32" font-weight="800">XX%</text>
+          </svg>
+          <div style="font-size: 15px; color: var(--white); opacity: 0.9; line-height: 1.45;">gauge stat label<br>on two lines</div>
+          <div style="font-size: 11px; color: var(--white); opacity: 0.65; margin-top: 10px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.8px;">Source, Year</div>
+        </div>
+        <div class="card card--blue" style="text-align: center; padding: 36px 24px;">
+          <svg viewBox="0 0 160 100" width="180" style="margin: 0 auto 16px;">
+            <path d="M20 85 A60 60 0 0 1 140 85" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="12" stroke-linecap="round"/>
+            <path d="M20 85 A60 60 0 0 1 110.4 36.5" fill="none" stroke="white" stroke-width="12" stroke-linecap="round"/>
+            <text x="80" y="78" text-anchor="middle" fill="white" font-size="32" font-weight="800">XX%</text>
+          </svg>
+          <div style="font-size: 15px; color: var(--white); opacity: 0.9; line-height: 1.45;">gauge stat label<br>on two lines</div>
+          <div style="font-size: 11px; color: var(--white); opacity: 0.65; margin-top: 10px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.8px;">Source, Year</div>
+        </div>
+        <div class="card" style="padding: 32px 28px; display: flex; flex-direction: column; justify-content: center;">
+          <div class="card-icon card-icon--purple-subtle" style="margin-bottom: 18px; width: 48px; height: 48px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round"><path d="M12 2a8 8 0 018 8c0 6-8 12-8 12S4 16 4 10a8 8 0 018-8z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <p>A plain card can carry a supporting insight instead of a number: icon, one or two lines of prose, source line.</p>
+          <div class="stat-source" style="margin-top: 12px;">Source, Year</div>
+        </div>
+      </div>
+      <blockquote style="margin-top: 32px; max-width: 100%;">Blockquotes span full width below a card row to land a synthesizing line.</blockquote>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 4: CALLOUT BANNER + DRIVER PILLS ==================== -->
+  <div class="slide" id="s4">
+    <div class="slide-content">
+      <div class="slide-label">Section Label</div>
+      <h2>Callout banner &amp; <strong>pill</strong> pattern</h2>
+      <p class="lead" style="margin-top: 8px; margin-bottom: 20px;">Lead paragraphs use the lighter slate color and a wider line height for readability at distance.</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="card" style="padding: 24px; border-left: 3px solid var(--blue); border-radius: 0 var(--radius) var(--radius) 0;">
+          <div style="font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--blue); margin-bottom: 10px;">Accent-Bordered Card</div>
+          <p>Left-border accent cards pair a colored rule with a short heading for a two-up comparison layout.</p>
+          <div class="stat-source" style="margin-top: 10px;">Source, Year</div>
+        </div>
+        <div class="card" style="padding: 24px; border-left: 3px solid var(--pink); border-radius: 0 var(--radius) var(--radius) 0;">
+          <div style="font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--pink); margin-bottom: 10px;">Accent-Bordered Card</div>
+          <p>Swap the border and label color to differentiate the second item in the pair.</p>
+          <div class="stat-source" style="margin-top: 10px;">Source, Year</div>
+        </div>
+      </div>
+      <div class="callout-banner" style="margin-top: 20px;">
+        <p style="margin-bottom: 14px;">Callout banners use the strong glass surface and hold a synthesizing paragraph, often followed by a row of driver pills:</p>
+        <div class="drivers-grid" style="margin-top: 14px; margin-bottom: 14px;">
+          <div class="driver-pill blue">Pill label one</div>
+          <div class="driver-pill purple">Pill label two</div>
+          <div class="driver-pill teal">Pill label three</div>
+          <div class="driver-pill pink">Pill label four</div>
+          <div class="driver-pill yellow">Pill label five</div>
+        </div>
+        <p style="font-size: 12.5px;">A closing line ties the pills back to the section's point.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 5: CLOSE / CTA LAYOUT ==================== -->
+  <div class="slide" id="s5">
+    <div class="slide-content">
+      <div class="slide-label">Close</div>
+      <h2>What's <strong>next</strong></h2>
+      <p class="lead" style="margin-top: 8px;">Closing slides keep the layout simple: a short lead paragraph, a divider, and one italic pink CTA line.</p>
+      <div class="divider"></div>
+      <p class="cta-line">This is the closing call-to-action line — italic, pink, and brightened for emphasis.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="slide-counter"><span id="counter">1 / 6</span></div>
+<div class="nav">
+  <button onclick="prevSlide()">←</button>
+  <button onclick="nextSlide()">→</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  function showSlide(i) {
+    slides[current].classList.remove('active');
+    current = (i + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+  }
+  function nextSlide() { showSlide(current + 1); }
+  function prevSlide() { showSlide(current - 1); }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
+</script>
+</body>
+</html>
