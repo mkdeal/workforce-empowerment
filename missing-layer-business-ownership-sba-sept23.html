@@ -566,8 +566,11 @@
   }
 
   /* Slide 5: qualifier pills under each system */
-  .sys-pills { gap: 6px; }
-  .sys-pills .disc-pill { font-size: 10.5px; padding: 4px 9px; }
+  .sys-pills { gap: 5px; }
+  /* The Human System list is half again as long as the Operating System list, so it
+     gets the wider column and the two sets land on a matching number of rows. */
+  #s4 .value-card .two-col { grid-template-columns: 0.9fr 1.1fr; gap: 12px; }
+  .sys-pills .disc-pill { font-size: 10px; padding: 4px 8px; letter-spacing: 0; }
   .sys-pills--hs .disc-pill { border-color: rgba(139,92,246,0.32); background: rgba(139,92,246,0.10); }
   .sys-pills--os .disc-pill { border-color: rgba(59,130,246,0.32); background: rgba(59,130,246,0.10); }
 
@@ -765,7 +768,7 @@
         <div class="qual-arrow">&#8594;</div>
         <div class="qual-set qual-set--re">
           <div class="qual-head">Operating from a regulated state</div>
-          <div class="qual-pills"><span class='qual-pill'>Resilience</span><span class='qual-pill'>Focus</span><span class='qual-pill'>Clarity</span><span class='qual-pill'>Confidence</span><span class='qual-pill'>Motivation</span><span class='qual-pill'>Presence</span><span class='qual-pill'>Perspective</span><span class='qual-pill'>Judgment</span><span class='qual-pill'>Communication</span><span class='qual-pill'>Trust</span></div>
+          <div class="qual-pills"><span class='qual-pill'>Resilience</span><span class='qual-pill'>Focus</span><span class='qual-pill'>Clarity</span><span class='qual-pill'>Confidence</span><span class='qual-pill'>Motivation</span><span class='qual-pill'>Presence</span><span class='qual-pill'>Perspective</span><span class='qual-pill'>Judgment</span><span class='qual-pill'>Communication</span><span class='qual-pill'>Trust</span><span class='qual-pill'>Energy</span></div>
         </div>
       </div>
 
@@ -800,7 +803,7 @@
             <div>
               <div style="font-size: 13.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--purple); filter: brightness(1.55);">Human System</div>
               <div style="font-size: 11.5px; font-weight: 600; color: var(--muted); margin-bottom: 8px;">(Owner System)</div>
-              <div class="disc-row sys-pills sys-pills--hs"><span class='disc-pill'>Trust</span><span class='disc-pill'>Morale</span><span class='disc-pill'>Identity</span><span class='disc-pill'>Resilience</span><span class='disc-pill'>Judgment</span><span class='disc-pill'>Clarity</span><span class='disc-pill'>Confidence</span><span class='disc-pill'>Presence</span></div>
+              <div class="disc-row sys-pills sys-pills--hs"><span class='disc-pill'>Trust</span><span class='disc-pill'>Morale</span><span class='disc-pill'>Identity</span><span class='disc-pill'>Resilience</span><span class='disc-pill'>Judgment</span><span class='disc-pill'>Clarity</span><span class='disc-pill'>Confidence</span><span class='disc-pill'>Presence</span><span class='disc-pill'>Focus</span><span class='disc-pill'>Motivation</span><span class='disc-pill'>Perspective</span><span class='disc-pill'>Communication</span></div>
             </div>
           </div>
         </div>
